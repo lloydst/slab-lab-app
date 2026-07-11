@@ -1,0 +1,19 @@
+{
+  "name": "Parsed tapered polygon",
+  "family": "tapered_polygon",
+  "height_mm": 120.0,
+  "bottom_diameter_mm": 60.0,
+  "top_diameter_mm": 90.0,
+  "sides": 4,
+  "scallops": null,
+  "scallop_depth_mm": null,
+  "oval_major_mm": null,
+  "oval_minor_mm": null,
+  "facets": null,
+  "ripple_mm": null,
+  "shrinkage_percent": 0.0,
+  "source_type": "text",
+  "source_description": "A modern tapered square cup, narrow at the base and wider at the top.",
+  "confidence": 0.86,
+  "warnings": []
+}

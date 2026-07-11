@@ -1,0 +1,30 @@
+{
+  "analysis": {
+    "description": "Mock vision analysis for reference.jpg suggests a vertical vessel with a scallop frustum silhouette, height-to-width ratio around 1.50, and a top-to-bottom ratio near 1.12.",
+    "detected_family": "scallop_frustum",
+    "confidence": 0.42,
+    "symmetry": "vertical",
+    "estimated_height_ratio": 1.5,
+    "estimated_top_to_bottom_ratio": 1.1216395324324493,
+    "rim_description": "uncertain from mock analysis",
+    "base_description": "uncertain from mock analysis",
+    "detected_features": [
+      "silhouette",
+      "symmetry",
+      "proportion"
+    ],
+    "ignored_features": [
+      "glaze",
+      "texture",
+      "decoration",
+      "lighting",
+      "reflections",
+      "decals"
+    ],
+    "warnings": [
+      "Mock analysis is based on image dimensions only.",
+      "Confirm rim shape, taper, and panel count before generating final geometry."
+    ]
+  },
+  "description": "Mock vision analysis for reference.jpg suggests a vertical vessel with a scallop frustum silhouette, height-to-width ratio around 1.50, and a top-to-bottom ratio near 1.12. Rim: uncertain from mock analysis. Base: uncertain from mock analysis. Warnings: Mock analysis is based on image dimensions only.; Confirm rim shape, taper, and panel count before generating final geometry."
+}

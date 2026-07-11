@@ -1,0 +1,14 @@
+__pycache__/
+.pytest_cache/
+backend/.pytest_cache/
+.venv/
+backend/.venv/
+env/
+venv/
+slablab_jobs/
+backend/slablab_jobs/
+backend/slablab_jobs/*
+!backend/slablab_jobs/.gitkeep
+frontend/node_modules/
+frontend/dist/
+*.pyc

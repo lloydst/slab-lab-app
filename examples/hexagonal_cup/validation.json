@@ -1,0 +1,13 @@
+{
+  "valid": true,
+  "buildable": true,
+  "closure_ok": true,
+  "base_perimeter_mm": 224.99999999999997,
+  "matched_edges_mm": 224.99999999999997,
+  "svg_units_ok": true,
+  "approximate": false,
+  "warnings": [
+    "Exact prism unwrap"
+  ],
+  "errors": []
+}

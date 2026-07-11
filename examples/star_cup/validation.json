@@ -1,0 +1,14 @@
+{
+  "valid": true,
+  "buildable": true,
+  "closure_ok": true,
+  "base_perimeter_mm": 281.46862211391135,
+  "matched_edges_mm": 281.46862211391135,
+  "svg_units_ok": true,
+  "approximate": true,
+  "warnings": [
+    "Faceted star is fold-practical approximate",
+    "Template is approximate and should be confirmed against a physical mockup."
+  ],
+  "errors": []
+}

@@ -1,0 +1,14 @@
+{
+  "valid": true,
+  "buildable": true,
+  "closure_ok": true,
+  "base_perimeter_mm": 219.9114857512855,
+  "matched_edges_mm": 260.75219024795285,
+  "svg_units_ok": true,
+  "approximate": true,
+  "warnings": [
+    "Scalloped rim is approximate but computed",
+    "Template is approximate and should be confirmed against a physical mockup."
+  ],
+  "errors": []
+}

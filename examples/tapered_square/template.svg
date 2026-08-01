@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="274.56mm" height="140.00mm" viewBox="0 0 274.56 140.00">
-  <rect x="0" y="0" width="274.56" height="140.00" fill="white"/>
-  <text x="10.00" y="16.00" font-size="4" fill="#374151">tapered_polygon | Parsed tapered polygon | H=120.0mm | bottom=60.0mm | top=90.0mm</text>
-  <path d="M 10.00 130.00 L 52.43 130.00 L 73.64 10.00 L 10.00 10.00 L 10.00 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 73.64 130.00 L 116.07 130.00 L 137.28 10.00 L 73.64 10.00 L 73.64 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 137.28 130.00 L 179.71 130.00 L 200.92 10.00 L 137.28 10.00 L 137.28 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 200.92 130.00 L 243.35 130.00 L 264.56 10.00 L 200.92 10.00 L 200.92 130.00" fill="none" stroke="#111827" stroke-width="0.75"/>
-</svg>

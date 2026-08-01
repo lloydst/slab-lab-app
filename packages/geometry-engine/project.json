@@ -1,0 +1,26 @@
+{
+  "name": "geometry-engine",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/geometry-engine/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": { "command": "npm run build -w @slablab/geometry-engine" },
+      "outputs": ["{workspaceRoot}/dist/geometry-engine"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "vitest run packages/geometry-engine" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "eslint packages/geometry-engine/src --max-warnings=0" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p packages/geometry-engine/tsconfig.json --noEmit" }
+    }
+  },
+  "tags": ["type:domain", "platform:neutral"]
+}

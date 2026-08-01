@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+}
+
+.thickness-key {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  grid-template-columns: 18px auto;
+  align-items: center;
+  gap: 3px 8px;
+  padding: 9px 11px;
+  border: 1px solid rgb(79 43 32 / 18%);
+  border-radius: 8px;
+  background: rgb(255 252 244 / 88%);
+  box-shadow: 0 3px 12px rgb(54 35 25 / 10%);
+  color: #63483d;
+  font-size: 11px;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+}
+
+.inner-swatch {
+  width: 18px;
+  height: 8px;
+  border-radius: 2px;
+  background: #e3a06f;
+}
+
+.thickness-key strong {
+  grid-column: 1 / -1;
+  color: #35251f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/web/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": { "command": "npm run build -w @slablab/web" },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "serve": { "executor": "nx:run-commands", "options": { "command": "npm run start -w @slablab/web" } },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "eslint apps/web/src --max-warnings=0" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p apps/web/tsconfig.app.json --noEmit" }
+    }
+  },
+  "tags": ["type:app", "platform:browser"]
+}

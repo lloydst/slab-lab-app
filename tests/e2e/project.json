@@ -1,0 +1,16 @@
+{
+  "name": "e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tests/e2e",
+  "projectType": "application",
+  "implicitDependencies": ["web"],
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": { "command": "playwright test" },
+      "cache": true,
+      "outputs": ["{workspaceRoot}/playwright-report", "{workspaceRoot}/test-results"]
+    }
+  },
+  "tags": ["type:e2e"]
+}

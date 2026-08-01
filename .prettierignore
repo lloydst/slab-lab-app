@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+.angular
+.nx
+playwright-report
+test-results
+package-lock.json

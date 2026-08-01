@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="245.00mm" height="140.00mm" viewBox="0 0 245.00 140.00">
-  <rect x="0" y="0" width="245.00" height="140.00" fill="white"/>
-  <text x="10.00" y="16.00" font-size="4" fill="#374151">polygon_prism | Parsed polygon prism | H=120.0mm | bottom=75.0mm | top=75.0mm</text>
-  <path d="M 10.00 130.00 L 47.50 130.00 L 47.50 10.00 L 10.00 10.00 L 10.00 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 47.50 130.00 L 85.00 130.00 L 85.00 10.00 L 47.50 10.00 L 47.50 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 85.00 130.00 L 122.50 130.00 L 122.50 10.00 L 85.00 10.00 L 85.00 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 122.50 130.00 L 160.00 130.00 L 160.00 10.00 L 122.50 10.00 L 122.50 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 160.00 130.00 L 197.50 130.00 L 197.50 10.00 L 160.00 10.00 L 160.00 130.00" fill="none" stroke="#111827" stroke-width="0.75"/><path d="M 197.50 130.00 L 235.00 130.00 L 235.00 10.00 L 197.50 10.00 L 197.50 130.00" fill="none" stroke="#111827" stroke-width="0.75"/>
-</svg>

@@ -1,0 +1,24 @@
+{
+  "name": "api",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "backend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": { "command": "npm run build -w @slablab/api" },
+      "outputs": ["{workspaceRoot}/dist/api"]
+    },
+    "serve": { "executor": "nx:run-commands", "options": { "command": "npm run start -w @slablab/api" } },
+    "test": { "executor": "nx:run-commands", "options": { "command": "vitest run backend" } },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "eslint backend/src --max-warnings=0" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p backend/tsconfig.json --noEmit" }
+    }
+  },
+  "tags": ["type:app", "platform:node"]
+}

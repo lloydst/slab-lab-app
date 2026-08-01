@@ -1,0 +1,43 @@
+{
+  "name": "slablab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Printable clay slab template designer",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "backend"
+  ],
+  "scripts": {
+    "start": "npm run start -w @slablab/web",
+    "start:api": "npm run start -w @slablab/api",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test --exclude=e2e",
+    "test:watch": "vitest",
+    "test:e2e": "nx run e2e:test",
+    "lint": "nx run-many -t lint",
+    "lint:fix": "nx run-many -t lint -- --fix",
+    "typecheck": "nx run-many -t typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "graph": "nx graph"
+  },
+  "devDependencies": {
+    "@angular-eslint/eslint-plugin": "^22.1.0",
+    "@angular-eslint/eslint-plugin-template": "^22.1.0",
+    "@angular-eslint/template-parser": "^22.1.0",
+    "@eslint/js": "^10.0.1",
+    "@nx/eslint": "^23.1.1",
+    "@nx/js": "^23.1.1",
+    "@playwright/test": "^1.54.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^26.1.0",
+    "nx": "^23.1.1",
+    "prettier": "^3.6.0",
+    "typescript": "~5.9.0",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^3.2.0"
+  }
+}

@@ -11,7 +11,7 @@ test('designs a cylinder and opens its printable template', async ({ page }) => 
   await page.getByRole('button', { name: 'FLAT TEMPLATE' }).click();
   await expect(page.locator('slab-template-preview svg')).toBeVisible();
   await expect(page.locator('slab-template-preview path.cut')).toHaveCount(3);
-  await expect(page.getByText('100% · 1:1')).toBeVisible();
+  await expect(page.getByText('Vector 1:1 · screen size varies')).toBeVisible();
   const svgScale = await page.locator('slab-template-preview svg').evaluate((svg) => ({
     declaredWidth: svg.getAttribute('width'),
     renderedWidth: svg.getBoundingClientRect().width,
@@ -87,4 +87,30 @@ test('keeps the preview and all footer actions visible while narrowing', async (
     expect(canvas).not.toBeNull();
     expect(canvas!.width).toBeGreaterThan(100);
   }
+});
+
+test('maps oval-box SVG viewBox units to millimetres without scaling', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Oval box$/ }).click();
+  await page.getByRole('button', { name: 'FLAT TEMPLATE' }).click();
+
+  const metrics = await page.locator('slab-template-preview svg').evaluate((svg) => {
+    const viewBox = svg.viewBox.baseVal;
+    const bounds = svg.getBoundingClientRect();
+    const calibration = svg.querySelector('rect');
+    if (!calibration) throw new Error('Calibration square not found');
+    const calibrationBounds = calibration.getBoundingClientRect();
+    return {
+      declaredWidth: svg.getAttribute('width'),
+      viewBoxWidth: viewBox.width,
+      renderedWidth: bounds.width,
+      squareUnits: calibration.getAttribute('width'),
+      squarePixels: calibrationBounds.width,
+      pixelsPerUnit: bounds.width / viewBox.width,
+    };
+  });
+
+  expect(Number.parseFloat(metrics.declaredWidth!)).toBeCloseTo(metrics.viewBoxWidth, 3);
+  expect(metrics.squareUnits).toBe('50');
+  expect(metrics.squarePixels / metrics.pixelsPerUnit).toBeCloseTo(50, 3);
 });

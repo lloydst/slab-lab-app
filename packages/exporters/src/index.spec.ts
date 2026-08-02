@@ -22,6 +22,8 @@ describe('SVG exporter', () => {
     });
     expect(svg).toContain('width="74mm"');
     expect(svg).toContain('50 mm calibration');
+    expect(svg).toContain('stroke:#b64f2f');
+    expect(svg).toContain('fill:#28633f');
     expect(svg).toContain('1 Wall');
     expect(svg).toContain('Print at 100%');
     expect(

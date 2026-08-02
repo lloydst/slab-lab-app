@@ -1,0 +1,60 @@
+<section class="stage">
+  <div class="stage-tabs">
+    <button type="button" [class.active]="ui.tab() === 'form'" (click)="ui.tab.set('form')">
+      3D FORM
+    </button>
+    <button type="button" [class.active]="ui.tab() === 'template'" (click)="ui.tab.set('template')">
+      FLAT TEMPLATE
+    </button>
+  </div>
+  <div class="stage-body">
+    @if (design.shape(); as shape) {
+      @if (ui.tab() === 'form') {
+        <slab-preview
+          [meshData]="shape.generateMesh()"
+          [wallThickness]="shape.parameters['wallThickness']"
+          [thicknessLabel]="design.thicknessLabel()"
+          [closedTop]="design.hasClosedTop()"
+        />
+      } @else {
+        <slab-template-preview [template]="shape.generateTemplate()" />
+      }
+    }
+    <div class="view-help">
+      <mat-icon>mouse</mat-icon> Drag to rotate · Scroll to zoom · Shift-drag to pan
+    </div>
+  </div>
+  <footer class="export-bar">
+    <div>
+      <mat-icon>print</mat-icon>
+      <span><b>Ready to make?</b><small>Templates are sized with shrinkage compensation.</small></span>
+    </div>
+    <div class="export-actions">
+      <button
+        type="button"
+        mat-stroked-button
+        [disabled]="design.issues().length"
+        (click)="design.export('svg')"
+      >
+        SVG
+      </button>
+      <button
+        type="button"
+        mat-stroked-button
+        [disabled]="design.issues().length"
+        (click)="design.export('png')"
+      >
+        PNG
+      </button>
+      <button
+        type="button"
+        mat-flat-button
+        class="primary"
+        [disabled]="design.issues().length"
+        (click)="design.export('pdf')"
+      >
+        Download PDF
+      </button>
+    </div>
+  </footer>
+</section>

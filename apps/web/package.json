@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build",
+    "test": "ng test",
+    "e2e": "ng e2e"
   },
   "dependencies": {
     "@angular/animations": "^22.1.0",

@@ -1,0 +1,58 @@
+<header class="topbar">
+  <a class="brand" href="/" aria-label="SlabLab home">
+    <span class="brand-mark">S</span><span>SLABLAB</span>
+  </a>
+  <div class="project-title">
+    @if (store.active(); as project) {
+      <div class="project-controls">
+        <mat-select
+          aria-label="Open project"
+          [ngModel]="project.id"
+          (ngModelChange)="store.activeId.set($event)"
+        >
+          @for (saved of store.projects(); track saved.id) {
+            <mat-option [value]="saved.id">{{ saved.name }}</mat-option>
+          }
+        </mat-select>
+        <input
+          aria-label="Project name"
+          [ngModel]="project.name"
+          (ngModelChange)="store.update({ name: $event })"
+        />
+        <button
+          type="button"
+          mat-icon-button
+          aria-label="Duplicate project"
+          matTooltip="Duplicate project"
+          (click)="store.duplicate(project.id)"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button
+          type="button"
+          mat-icon-button
+          aria-label="Delete project"
+          matTooltip="Delete project"
+          (click)="store.delete(project.id)"
+        >
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    }
+    <span class="saved"><i></i> Saved locally</span>
+  </div>
+  <nav>
+    <button type="button" mat-button (click)="ui.openPanel('guide')">
+      <mat-icon>help_outline</mat-icon> Guide
+    </button>
+    <button
+      type="button"
+      mat-flat-button
+      class="primary"
+      [disabled]="exportDisabled()"
+      (click)="exportRequested.emit()"
+    >
+      <mat-icon>download</mat-icon> Export
+    </button>
+  </nav>
+</header>

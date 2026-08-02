@@ -1,0 +1,25 @@
+<aside class="rail">
+  <button type="button" class="rail-action" (click)="createProject()">
+    <mat-icon>add</mat-icon><span>New</span>
+  </button>
+  <div class="rail-rule"></div>
+  <button
+    type="button"
+    class="rail-action"
+    [class.active]="ui.panel() === 'shape'"
+    (click)="ui.openPanel('shape')"
+  >
+    <mat-icon>deployed_code</mat-icon><span>Shape</span>
+  </button>
+  <button type="button" class="rail-action" (click)="ui.openTemplate()">
+    <mat-icon>architecture</mat-icon><span>Template</span>
+  </button>
+  <button
+    type="button"
+    class="rail-action"
+    [class.active]="ui.panel() === 'projects'"
+    (click)="ui.openPanel('projects')"
+  >
+    <mat-icon>folder_open</mat-icon><span>Projects</span>
+  </button>
+</aside>

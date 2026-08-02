@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  height: 100vh;
+  color: #1d2920;
+  background: #eef0e9;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 78px 380px 1fr;
+  height: calc(100vh - 70px);
+}
+
+slab-workspace-sidebar,
+slab-workspace-form,
+slab-workspace-tabs {
+  display: contents;
+}
+
+@media (max-width: 1000px) {
+  .workspace {
+    grid-template-columns: 70px 330px 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    grid-template-columns: 62px 1fr;
+  }
+}

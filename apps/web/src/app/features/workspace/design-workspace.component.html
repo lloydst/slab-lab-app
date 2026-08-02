@@ -1,0 +1,10 @@
+<slab-workspace-header
+  [exportDisabled]="design.issues().length > 0"
+  (exportRequested)="design.export('pdf')"
+/>
+
+<main class="workspace">
+  <slab-workspace-sidebar />
+  <slab-workspace-form />
+  <slab-workspace-tabs />
+</main>

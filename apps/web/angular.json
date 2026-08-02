@@ -16,16 +16,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [],
-            "styles": ["src/styles.scss"],
-            "allowedCommonJsDependencies": [
-              "core-js",
-              "cssesc",
-              "font-family-papandreou",
-              "html2canvas",
-              "raf",
-              "rgbcolor",
-              "svgpath"
-            ]
+            "styles": ["src/styles.scss"]
           }
         },
         "serve": { "builder": "@angular/build:dev-server", "options": { "buildTarget": "web:build" } }

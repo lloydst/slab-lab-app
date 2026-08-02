@@ -4,14 +4,26 @@ import type { TemplateExporter } from './template-exporter';
 const POINTS_PER_MM = 72 / 25.4;
 const PAGE_WIDTH_MM = 210;
 const PAGE_HEIGHT_MM = 297;
-const PAGE_MARGIN_MM = 12;
 const FOOTER_TOP_MM = 82;
-const CONTENT_WIDTH_MM = PAGE_WIDTH_MM - PAGE_MARGIN_MM * 2;
-const CONTENT_HEIGHT_MM = PAGE_HEIGHT_MM - PAGE_MARGIN_MM - FOOTER_TOP_MM;
 const CUT_COLOR = '0.714 0.31 0.184 RG';
 const FOLD_COLOR = '0.141 0.427 0.545 RG';
 const TEXT_COLOR = '0.157 0.388 0.247 rg';
 const WARNING_COLOR = '0.631 0.247 0.471 rg';
+
+interface PdfLayout {
+  margin: number;
+  contentWidth: number;
+  contentHeight: number;
+}
+
+const createLayout = (borderless: boolean): PdfLayout => {
+  const margin = borderless ? 0 : 12;
+  return {
+    margin,
+    contentWidth: PAGE_WIDTH_MM - margin * 2,
+    contentHeight: PAGE_HEIGHT_MM - margin - FOOTER_TOP_MM,
+  };
+};
 
 const formatNumber = (value: number) => Number(value.toFixed(3)).toString();
 const toPoints = (millimetres: number) => formatNumber(millimetres * POINTS_PER_MM);
@@ -30,11 +42,11 @@ const textCommands = (text: string, xMm: number, yMm: number, fontSizeMm: number
     'ET',
   ].join('\n');
 
-const pathCommands = (path: TemplatePath, offsetX: number, offsetY: number) => {
+const pathCommands = (path: TemplatePath, offsetX: number, offsetY: number, layout: PdfLayout) => {
   if (!path.points.length) return '';
   const commands = path.points.map((point, index) => {
-    const x = point.x - offsetX + PAGE_MARGIN_MM;
-    const y = PAGE_HEIGHT_MM - (point.y - offsetY) - PAGE_MARGIN_MM;
+    const x = point.x - offsetX + layout.margin;
+    const y = PAGE_HEIGHT_MM - (point.y - offsetY) - layout.margin;
     return `${toPoints(x)} ${toPoints(y)} ${index ? 'l' : 'm'}`;
   });
   if (path.closed) commands.push('h');
@@ -57,6 +69,7 @@ const pageContent = (
   offsetY: number,
   pageNumber: number,
   pageCount: number,
+  layout: PdfLayout,
 ) => {
   const commands = [
     'q',
@@ -64,7 +77,7 @@ const pageContent = (
     TEXT_COLOR,
     '1 J',
     '1 j',
-    `${toPoints(PAGE_MARGIN_MM)} ${toPoints(FOOTER_TOP_MM)} ${toPoints(CONTENT_WIDTH_MM)} ${toPoints(CONTENT_HEIGHT_MM)} re W n`,
+    `${toPoints(layout.margin)} ${toPoints(FOOTER_TOP_MM)} ${toPoints(layout.contentWidth)} ${toPoints(layout.contentHeight)} re W n`,
   ];
   for (const path of template.paths) {
     commands.push(
@@ -72,22 +85,22 @@ const pageContent = (
         ? `${FOLD_COLOR}\n${toPoints(0.35)} w\n[${toPoints(3)} ${toPoints(2)}] 0 d`
         : `${CUT_COLOR}\n${toPoints(0.42)} w\n[] 0 d`,
     );
-    commands.push(pathCommands(path, offsetX, offsetY));
+    commands.push(pathCommands(path, offsetX, offsetY, layout));
     const center = pathCenter(path);
     const label = `${path.assemblyNumber ?? ''} ${path.label ?? ''}`.trim();
     if (
       label &&
       center.x >= offsetX &&
-      center.x < offsetX + CONTENT_WIDTH_MM &&
+      center.x < offsetX + layout.contentWidth &&
       center.y >= offsetY &&
-      center.y < offsetY + CONTENT_HEIGHT_MM
+      center.y < offsetY + layout.contentHeight
     )
       commands.push(
         TEXT_COLOR,
         textCommands(
           label,
-          center.x - offsetX + PAGE_MARGIN_MM,
-          PAGE_HEIGHT_MM - (center.y - offsetY) - PAGE_MARGIN_MM,
+          center.x - offsetX + layout.margin,
+          PAGE_HEIGHT_MM - (center.y - offsetY) - layout.margin,
           4,
         ),
       );
@@ -96,9 +109,9 @@ const pageContent = (
     'Q',
     CUT_COLOR,
     `${toPoints(0.42)} w\n[] 0 d`,
-    `${toPoints(PAGE_MARGIN_MM)} ${toPoints(12)} ${toPoints(50)} ${toPoints(50)} re S`,
+    `${toPoints(12)} ${toPoints(12)} ${toPoints(50)} ${toPoints(50)} re S`,
   );
-  commands.push(TEXT_COLOR, textCommands('50 mm calibration', PAGE_MARGIN_MM + 8, 36, 4));
+  commands.push(TEXT_COLOR, textCommands('50 mm calibration', 20, 36, 4));
   commands.push(
     textCommands(`Page ${pageNumber} of ${pageCount} - A4 - Print at 100% / Actual size`, 72, 50, 3.5),
   );
@@ -169,14 +182,24 @@ const buildPdf = (contents: string[]) => {
 export class PdfExporter implements TemplateExporter {
   readonly mimeType = 'application/pdf';
 
+  constructor(private readonly settings: { borderless?: boolean } = {}) {}
+
   async export(template: SlabTemplate) {
-    const columns = Math.max(1, Math.ceil(template.dimensions.width / CONTENT_WIDTH_MM));
-    const rows = Math.max(1, Math.ceil(template.dimensions.height / CONTENT_HEIGHT_MM));
+    const layout = createLayout(this.settings.borderless === true);
+    const columns = Math.max(1, Math.ceil(template.dimensions.width / layout.contentWidth));
+    const rows = Math.max(1, Math.ceil(template.dimensions.height / layout.contentHeight));
     const pageCount = columns * rows;
     const contents = Array.from({ length: pageCount }, (_, index) => {
       const column = index % columns,
         row = Math.floor(index / columns);
-      return pageContent(template, column * CONTENT_WIDTH_MM, row * CONTENT_HEIGHT_MM, index + 1, pageCount);
+      return pageContent(
+        template,
+        column * layout.contentWidth,
+        row * layout.contentHeight,
+        index + 1,
+        pageCount,
+        layout,
+      );
     });
     return buildPdf(contents);
   }

@@ -4,7 +4,7 @@ import { compensate, frustumPresets, ShapeFactory } from '@slablab/geometry-engi
 import { MeasurementUnit, ShapeKind } from '@slablab/shared';
 import { ProjectStore } from '../../../data-access/projects/project.store';
 
-export type ExportFormat = 'svg' | 'pdf' | 'png';
+export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png';
 
 @Injectable()
 export class WorkspaceDesignService {
@@ -121,10 +121,18 @@ export class WorkspaceDesignService {
     const project = this.store.active();
     if (!shape || !project || this.issues().length) return;
     const exporter =
-      format === 'svg' ? new SvgExporter() : format === 'pdf' ? new PdfExporter() : new PngExporter();
+      format === 'svg'
+        ? new SvgExporter()
+        : format === 'pdf'
+          ? new PdfExporter()
+          : format === 'pdf-borderless'
+            ? new PdfExporter({ borderless: true })
+            : new PngExporter();
+    const extension = format === 'pdf-borderless' ? 'pdf' : format;
+    const suffix = format === 'pdf-borderless' ? '-borderless' : '';
     downloadBlob(
       await exporter.export(shape.generateTemplate()),
-      `${project.name.replace(/\s+/g, '-').toLowerCase()}.${format}`,
+      `${project.name.replace(/\s+/g, '-').toLowerCase()}${suffix}.${extension}`,
     );
   }
 }

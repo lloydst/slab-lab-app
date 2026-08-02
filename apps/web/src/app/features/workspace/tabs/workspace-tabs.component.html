@@ -46,8 +46,19 @@
       </button>
       <button
         type="button"
+        mat-stroked-button
+        aria-label="Borderless PDF"
+        [disabled]="design.issues().length > 0"
+        (click)="design.export('pdf-borderless')"
+      >
+        <span class="borderless-label">Borderless&nbsp;</span
+        ><span class="borderless-short">Full&nbsp;</span>PDF
+      </button>
+      <button
+        type="button"
         mat-flat-button
         class="primary"
+        aria-label="Download PDF"
         [disabled]="design.issues().length > 0"
         (click)="design.export('pdf')"
       >

@@ -29,4 +29,13 @@ describe('PDF exporter', () => {
     expect(pdf.match(/\/Type \/Page /g) ?? []).toHaveLength(pageCount);
     expect(pdf.match(/34\.016 34\.016 141\.732 141\.732 re S/g) ?? []).toHaveLength(pageCount);
   });
+
+  it('uses the full page edges in optional borderless mode', async () => {
+    const template = { paths: [], dimensions: { width: 200, height: 200 }, unit: 'mm' as const, notes: [] };
+    const pdf = new TextDecoder('windows-1252').decode(
+      await (await new PdfExporter({ borderless: true }).export(template)).arrayBuffer(),
+    );
+    expect(pdf).toContain('0 232.441 595.276 609.449 re W n');
+    expect(pdf).toContain('/MediaBox [0 0 595.276 841.89]');
+  });
 });

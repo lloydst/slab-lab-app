@@ -1,9 +1,11 @@
 .topbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(280px, 1fr) auto;
+  align-items: center;
+  gap: 16px;
   height: 70px;
   padding: 0 22px;
-  display: grid;
-  grid-template-columns: 220px 1fr auto;
-  align-items: center;
+  overflow: hidden;
   border-bottom: 1px solid #d6d9d2;
   background: #fafaf7;
 }
@@ -11,15 +13,19 @@
 .brand {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 11px;
   color: #1b281e;
   text-decoration: none;
-  font: 700 17px/1 'Inter', sans-serif;
+  font:
+    700 17px/1 'Inter',
+    sans-serif;
   letter-spacing: 2px;
 }
 
 .brand-mark {
   display: grid;
+  flex: 0 0 34px;
   place-items: center;
   width: 34px;
   height: 34px;
@@ -30,22 +36,62 @@
 }
 
 .project-title {
-  text-align: center;
+  position: relative;
+  min-width: 0;
 }
 
-.project-title input {
-  width: 220px;
+.project-controls {
+  display: flex;
+  align-items: center;
+  width: min(100%, 540px);
+  height: 40px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #d7dbd4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(31 44 34 / 6%);
+}
+
+.project-controls mat-select {
+  flex: 0 1 180px;
+  min-width: 100px;
+  padding: 0 12px;
+  color: #5e6b62;
+  font-size: 12px;
+}
+
+.project-controls input {
+  flex: 1 1 180px;
+  min-width: 80px;
+  height: 100%;
+  padding: 0 14px;
   border: 0;
+  border-left: 1px solid #e3e5e0;
+  outline: 0;
   background: transparent;
   color: #263027;
-  text-align: center;
-  font: 600 15px Inter;
+  font: 600 14px Inter;
+}
+
+.project-controls button {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  color: #69756c;
+}
+.project-controls mat-icon {
+  font-size: 19px;
 }
 
 .saved {
-  display: block;
+  position: absolute;
+  top: 43px;
+  left: 50%;
   color: #738077;
-  font-size: 10px;
+  font-size: 9px;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .saved i {
@@ -56,23 +102,70 @@
   border-radius: 50%;
   background: #638267;
 }
-
 nav {
   display: flex;
   gap: 8px;
 }
-
 .primary {
   background: #bd643f !important;
   color: white !important;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .topbar {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 70px minmax(220px, 1fr) auto;
+    padding-inline: 12px;
+    gap: 10px;
   }
+  .brand-name {
+    display: none;
+  }
+  .project-controls mat-select {
+    flex-basis: 135px;
+  }
+  .saved {
+    display: none;
+  }
+}
 
-  .project-title {
+@media (max-width: 600px) {
+  .topbar {
+    grid-template-columns: 38px minmax(0, 1fr) 42px;
+    padding-inline: 8px;
+    gap: 7px;
+  }
+  .project-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 30px 30px;
+    height: 62px;
+    border-radius: 8px;
+  }
+  .project-controls mat-select {
+    min-width: 0;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+  .project-controls input {
+    min-width: 0;
+    width: 100%;
+    padding: 0 9px;
+    border-top: 1px solid #e3e5e0;
+    border-left: 0;
+    font-size: 11px;
+  }
+  .project-controls button {
+    display: none;
+  }
+  nav button:first-child {
+    display: none;
+  }
+  nav button {
+    min-width: 42px;
+    width: 42px;
+    padding: 0 !important;
+  }
+  .nav-label {
     display: none;
   }
 }

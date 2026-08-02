@@ -96,6 +96,10 @@
 .export-actions button {
   min-width: 0;
 }
+
+.borderless-short {
+  display: none;
+}
 .primary {
   background: #bd643f !important;
   color: white !important;
@@ -153,5 +157,11 @@
   }
   .download-label {
     display: none;
+  }
+  .borderless-label {
+    display: none;
+  }
+  .borderless-short {
+    display: inline;
   }
 }

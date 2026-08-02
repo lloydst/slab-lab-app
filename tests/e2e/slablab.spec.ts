@@ -26,6 +26,18 @@ test('keeps design controls accessible on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
+  const projectSelector = page.getByLabel('Open project');
+  const projectName = page.getByLabel('Project name');
+  await expect(projectSelector).toBeVisible();
+  await expect(projectName).toBeVisible();
+  for (const control of [projectSelector, projectName]) {
+    const bounds = await control.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds!.x).toBeGreaterThanOrEqual(0);
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(70);
+  }
+
   const inspector = page.locator('.inspector');
   await expect(inspector).not.toHaveClass(/mobile-open/);
   await page.getByRole('button', { name: 'Shape' }).click();
@@ -42,7 +54,7 @@ test('keeps design controls accessible on mobile', async ({ page }) => {
     })
     .toBeLessThanOrEqual(0);
   await expect(page.getByRole('button', { name: '3D FORM' })).toBeVisible();
-  const mobileExport = page.getByRole('button', { name: /PDF/ });
+  const mobileExport = page.getByRole('button', { name: 'Download PDF' });
   await expect(mobileExport).toBeVisible();
   const exportBounds = await mobileExport.boundingBox();
   expect(exportBounds).not.toBeNull();
@@ -81,8 +93,8 @@ test('keeps the preview and all footer actions visible while narrowing', async (
     await page.setViewportSize({ width, height: 700 });
     await page.goto('/');
     await expect(page.locator('slab-preview canvas')).toBeVisible();
-    for (const action of ['SVG', 'PNG', 'PDF'])
-      await expect(page.getByRole('button', { name: new RegExp(action) })).toBeVisible();
+    for (const action of ['SVG', 'PNG', 'Borderless PDF', 'Download PDF'])
+      await expect(page.getByRole('button', { name: action, exact: true })).toBeVisible();
     const canvas = await page.locator('slab-preview canvas').boundingBox();
     expect(canvas).not.toBeNull();
     expect(canvas!.width).toBeGreaterThan(100);

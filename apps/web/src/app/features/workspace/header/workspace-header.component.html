@@ -1,6 +1,6 @@
 <header class="topbar">
   <a class="brand" href="/" aria-label="SlabLab home">
-    <span class="brand-mark">S</span><span>SLABLAB</span>
+    <span class="brand-mark">S</span><span class="brand-name">SLABLAB</span>
   </a>
   <div class="project-title">
     @if (store.active(); as project) {
@@ -43,7 +43,7 @@
   </div>
   <nav>
     <button type="button" mat-button (click)="ui.openPanel('guide')">
-      <mat-icon>help_outline</mat-icon> Guide
+      <mat-icon>help_outline</mat-icon><span class="nav-label">Guide</span>
     </button>
     <button
       type="button"
@@ -52,7 +52,7 @@
       [disabled]="exportDisabled()"
       (click)="exportRequested.emit()"
     >
-      <mat-icon>download</mat-icon> Export
+      <mat-icon>download</mat-icon><span class="nav-label">Export</span>
     </button>
   </nav>
 </header>

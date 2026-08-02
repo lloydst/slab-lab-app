@@ -10,7 +10,7 @@ export type ExportFormat = 'svg' | 'pdf' | 'png';
 export class WorkspaceDesignService {
   readonly store = inject(ProjectStore);
   private readonly factory = new ShapeFactory();
-  
+
   readonly shapes: { kind: ShapeKind; label: string; glyph: string }[] = [
     { kind: 'cylinder', label: 'Cylinder', glyph: '◯' },
     { kind: 'cube', label: 'Cube', glyph: '□' },
@@ -19,6 +19,17 @@ export class WorkspaceDesignService {
     { kind: 'vase', label: 'Vase', glyph: '♢' },
     { kind: 'bowl', label: 'Bowl', glyph: '⌣' },
     { kind: 'oval-box', label: 'Oval box', glyph: '⬭' },
+    { kind: 'hexagonal-prism', label: 'Hexagonal prism', glyph: '⬡' },
+    { kind: 'octagonal-prism', label: 'Octagonal prism', glyph: '⯃' },
+    { kind: 'tapered-box', label: 'Tapered box', glyph: '▱' },
+    { kind: 'truncated-square-pyramid', label: 'Square pyramid', glyph: '◫' },
+    { kind: 'polygonal-vase', label: 'Polygonal vase', glyph: '⬢' },
+    { kind: 'rounded-rectangle-box', label: 'Rounded box', glyph: '▢' },
+    { kind: 'elliptical-vase', label: 'Elliptical vase', glyph: '⬭' },
+    { kind: 'faceted-bowl', label: 'Faceted bowl', glyph: '◡' },
+    { kind: 'gored-sphere', label: 'Gored sphere', glyph: '◉' },
+    { kind: 'teardrop-vessel', label: 'Teardrop', glyph: '◒' },
+    { kind: 'organic-lofted-vessel', label: 'Organic loft', glyph: '≈' },
   ];
   readonly shape = computed(() => {
     const project = this.store.active();
@@ -27,7 +38,15 @@ export class WorkspaceDesignService {
     const parameters = Object.fromEntries(
       Object.entries(project.parameters).map(([key, value]) => [
         key,
-        key === 'hasLid' || key === 'lidStyle' || key === 'roundness'
+        key === 'hasLid' ||
+        key === 'lidStyle' ||
+        key === 'roundness' ||
+        key === 'sides' ||
+        key === 'points' ||
+        key === 'facets' ||
+        key === 'gores' ||
+        key === 'includeBase' ||
+        key === 'closedTop'
           ? value
           : key === 'lidLift'
             ? value * factor[project.unit]

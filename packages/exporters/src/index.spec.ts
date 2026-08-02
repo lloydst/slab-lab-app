@@ -20,7 +20,8 @@ describe('SVG exporter', () => {
       unit: 'mm',
       notes: [],
     });
-    expect(svg).toContain('width="34mm"');
+    expect(svg).toContain('width="74mm"');
+    expect(svg).toContain('50 mm calibration');
     expect(svg).toContain('1 Wall');
     expect(svg).toContain('Print at 100%');
   });

@@ -104,6 +104,12 @@ export const superellipsePoints = (width: number, depth: number, roundness: numb
   });
 };
 
+export const roundedRectanglePoints = (width: number, depth: number, radius: number, segments = 32) => {
+  const r = Math.min(radius, width / 2, depth / 2), perCorner = Math.max(2, Math.ceil(segments / 4));
+  return [[width/2-r,depth/2-r],[-width/2+r,depth/2-r],[-width/2+r,-depth/2+r],[width/2-r,-depth/2+r]].flatMap(([cx,cy],corner) =>
+    Array.from({length:perCorner},(_,i)=>{const angle=corner*Math.PI/2+i/(perCorner-1)*Math.PI/2;return{x:cx!+Math.cos(angle)*r,y:cy!+Math.sin(angle)*r};}));
+};
+
 export const polygonPerimeter = (points: { x: number; y: number }[]) =>
   points.reduce((total, point, index) => {
     const next = points[(index + 1) % points.length];

@@ -1,5 +1,23 @@
 export type MeasurementUnit = 'mm' | 'cm' | 'in';
-export type ShapeKind = 'cylinder' | 'cube' | 'box' | 'truncated-cone' | 'vase' | 'bowl' | 'oval-box';
+export type ShapeKind =
+  | 'cylinder'
+  | 'cube'
+  | 'box'
+  | 'truncated-cone'
+  | 'vase'
+  | 'bowl'
+  | 'oval-box'
+  | 'hexagonal-prism'
+  | 'octagonal-prism'
+  | 'tapered-box'
+  | 'truncated-square-pyramid'
+  | 'polygonal-vase'
+  | 'rounded-rectangle-box'
+  | 'elliptical-vase'
+  | 'faceted-bowl'
+  | 'gored-sphere'
+  | 'teardrop-vessel'
+  | 'organic-lofted-vessel';
 
 export interface SlabProject {
   id: string;

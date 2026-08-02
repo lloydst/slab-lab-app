@@ -31,6 +31,8 @@ Prettier and `npm run lint:fix` for safe ESLint fixes.
 
 The workspace contains the Angular app in `apps/web`, reusable packages in `packages`, the NestJS boundary in `backend`, Playwright journeys in `tests/e2e`, and design notes in `docs/architecture.md`.
 
+Production releases use Firebase Hosting for the Angular frontend and Google Cloud Run for the NestJS API. See [docs/firebase-release.md](docs/firebase-release.md) for the sanitized release runbook.
+
 ## Printing
 
 Choose a shape, enter finished dimensions and clay shrinkage, then export SVG, PDF, or PNG. Print PDFs and SVGs at 100% / actual size. Validate printer scaling with a ruler before cutting clay.

@@ -11,6 +11,8 @@
   "scripts": {
     "start": "npm run start -w @slablab/web",
     "start:api": "npm run start -w @slablab/api",
+    "start:api:prod": "node dist/api/main.js",
+    "deploy:web": "npm run build -w @slablab/web && npx firebase-tools deploy --only hosting",
     "build": "nx run-many -t build",
     "test": "nx run-many -t test --exclude=e2e",
     "test:watch": "vitest",

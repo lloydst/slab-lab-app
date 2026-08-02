@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 import angular from '@angular-eslint/eslint-plugin';
 import angularTemplate from '@angular-eslint/eslint-plugin-template';
 import angularTemplateParser from '@angular-eslint/template-parser';
+import stylistic from '@stylistic/eslint-plugin';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
@@ -45,4 +46,18 @@ export default tseslint.config(
     },
   },
   prettier,
+  {
+    files: ['**/*.{js,mjs,cjs,ts}'],
+    plugins: {
+      '@stylistic': stylistic,
+    },
+    rules: {
+      'max-classes-per-file': ['error', 1],
+      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'function', next: 'function' },
+      ],
+    },
+  },
 );

@@ -42,7 +42,7 @@
     <span class="saved"><i></i> Saved locally</span>
   </div>
   <nav>
-    <button type="button" mat-button (click)="panel.set('guide')">
+    <button type="button" mat-button (click)="openPanel('guide')">
       <mat-icon>help_outline</mat-icon> Guide</button
     ><button
       type="button"
@@ -58,7 +58,7 @@
 
 <main class="workspace">
   <aside class="rail">
-    <button type="button" class="rail-action" (click)="store.create(); panel.set('shape')">
+    <button type="button" class="rail-action" (click)="store.create(); openPanel('shape')">
       <mat-icon>add</mat-icon><span>New</span>
     </button>
     <div class="rail-rule"></div>
@@ -66,24 +66,32 @@
       type="button"
       class="rail-action"
       [class.active]="panel() === 'shape'"
-      (click)="panel.set('shape')"
+      (click)="openPanel('shape')"
     >
       <mat-icon>deployed_code</mat-icon><span>Shape</span>
     </button>
-    <button type="button" class="rail-action" (click)="panel.set('shape'); tab.set('template')">
+    <button type="button" class="rail-action" (click)="openPanel('shape'); tab.set('template')">
       <mat-icon>architecture</mat-icon><span>Template</span>
     </button>
     <button
       type="button"
       class="rail-action"
       [class.active]="panel() === 'projects'"
-      (click)="panel.set('projects')"
+      (click)="openPanel('projects')"
     >
       <mat-icon>folder_open</mat-icon><span>Projects</span>
     </button>
   </aside>
 
-  <section class="inspector">
+  <section class="inspector" [class.mobile-open]="mobilePanelOpen()">
+    <button
+      type="button"
+      class="mobile-preview"
+      aria-label="Show preview"
+      (click)="mobilePanelOpen.set(false)"
+    >
+      <mat-icon>close</mat-icon><span>Show preview</span>
+    </button>
     @if (panel() === 'projects') {
       <div class="section-heading">
         <p>PROJECT LIBRARY</p>
@@ -168,16 +176,35 @@
           </div>
         }
         @if (project.parameters['hasLid'] !== undefined) {
-          <div class="lid-toggle">
-            <div>
-              <b>Add inset lid</b><span>Fits inside the opening using wall thickness and clearance.</span>
-            </div>
-            <mat-slide-toggle
-              aria-label="Add inset lid"
-              [checked]="project.parameters['hasLid'] >= 0.5"
-              (change)="setParameter('hasLid', $event.checked ? 1 : 0)"
-            />
-          </div>
+          <label class="lid-mode">
+            <span>Lid type</span>
+            <mat-select
+              aria-label="Lid type"
+              [ngModel]="lidMode(project.parameters)"
+              (ngModelChange)="setLidMode($event)"
+            >
+              <mat-option [value]="0">None</mat-option>
+              <mat-option [value]="1">Inset</mat-option>
+              <mat-option [value]="2">Overhanging</mat-option>
+              @if (project.shape === 'box' || project.shape === 'vase' || project.shape === 'oval-box') {
+                <mat-option [value]="3">Box lid</mat-option>
+              }
+              <mat-option [value]="4">Top + inset stopper</mat-option>
+            </mat-select>
+            <small>
+              @if (lidMode(project.parameters) === 1) {
+                Fits inside the opening.
+              } @else if (lidMode(project.parameters) === 2) {
+                Covers the outside edge of the opening.
+              } @else if (lidMode(project.parameters) === 3) {
+                A shallow cap with four vertical skirt walls.
+              } @else if (lidMode(project.parameters) === 4) {
+                A flush top matching the vessel with an inset stopper underneath.
+              } @else {
+                Leaves the form open.
+              }
+            </small>
+          </label>
         }
         <div class="field-grid">
           @for (field of fields(); track field) {
@@ -186,7 +213,7 @@
               <div>
                 <input
                   type="number"
-                  [min]="field === 'roundness' ? 0 : 0.1"
+                  [min]="field === 'roundness' || field === 'lidLift' ? 0 : 0.1"
                   [max]="field === 'roundness' ? 100 : null"
                   step="1"
                   [ngModel]="project.parameters[field]"

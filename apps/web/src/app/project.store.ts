@@ -1,31 +1,16 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { SlabProject, ShapeKind } from '@slablab/shared';
 import { shapeDefaults } from '@slablab/geometry-engine';
+import { LocalProjectRepository } from './local-project.repository';
+import { ProjectRepository } from './project.repository';
 
-export abstract class ProjectRepository {
-  abstract load(): SlabProject[];
-  abstract save(projects: SlabProject[]): void;
-}
-@Injectable({ providedIn: 'root' })
-export class LocalProjectRepository implements ProjectRepository {
-  private readonly key = 'slablab.projects.v1';
-  load(): SlabProject[] {
-    try {
-      return JSON.parse(localStorage.getItem(this.key) ?? '[]') as SlabProject[];
-    } catch {
-      return [];
-    }
-  }
-  save(projects: SlabProject[]) {
-    localStorage.setItem(this.key, JSON.stringify(projects));
-  }
-}
 @Injectable({ providedIn: 'root' })
 export class ProjectStore {
   private readonly repository: ProjectRepository;
   readonly projects = signal<SlabProject[]>([]);
   readonly activeId = signal<string | null>(null);
   readonly active = computed(() => this.projects().find((p) => p.id === this.activeId()) ?? null);
+
   constructor(local: LocalProjectRepository) {
     this.repository = local;
     const stored = this.repository.load().map((project): SlabProject => {
@@ -41,6 +26,7 @@ export class ProjectStore {
     if (stored.length) this.activeId.set(stored[0].id);
     else this.create('Cylinder study', 'cylinder');
   }
+
   create(name = 'Untitled vessel', shape: ShapeKind = 'cylinder') {
     const now = new Date().toISOString();
     const project: SlabProject = {

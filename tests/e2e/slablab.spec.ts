@@ -21,3 +21,25 @@ test('designs a cylinder and opens its printable template', async ({ page }) => 
   await expect(page.getByText(/Print at 100%/)).toBeVisible();
   await expect(page.getByText('Surface area')).toBeVisible();
 });
+
+test('keeps design controls accessible on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const inspector = page.locator('.inspector');
+  await expect(inspector).not.toHaveClass(/mobile-open/);
+  await page.getByRole('button', { name: 'Shape' }).click();
+  await expect(inspector).toHaveClass(/mobile-open/);
+  await expect(page.getByText('Choose your form')).toBeVisible();
+  await expect(page.getByLabel('Height')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Show preview' }).click();
+  await expect(inspector).not.toHaveClass(/mobile-open/);
+  await expect
+    .poll(async () => {
+      const box = await inspector.boundingBox();
+      return box ? box.x + box.width : 0;
+    })
+    .toBeLessThanOrEqual(0);
+  await expect(page.getByRole('button', { name: '3D FORM' })).toBeVisible();
+});

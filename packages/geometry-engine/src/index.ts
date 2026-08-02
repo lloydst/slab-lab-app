@@ -1,2 +1,2 @@
-export * from './model';
+export * from './core/model';
 export * from './shapes';

@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,7 +24,6 @@ import { ProjectStore } from './project.store';
     MatIconModule,
     MatInputModule,
     MatSelectModule,
-    MatSlideToggleModule,
     MatSliderModule,
     MatTabsModule,
     MatTooltipModule,
@@ -41,6 +39,7 @@ export class AppComponent {
   readonly factory = new ShapeFactory();
   readonly tab = signal<'form' | 'template'>('form');
   readonly panel = signal<'shape' | 'projects' | 'guide'>('shape');
+  readonly mobilePanelOpen = signal(false);
   readonly shapes: { kind: ShapeKind; label: string; glyph: string }[] = [
     { kind: 'cylinder', label: 'Cylinder', glyph: '◯' },
     { kind: 'cube', label: 'Cube', glyph: '□' },
@@ -58,7 +57,11 @@ export class AppComponent {
     const adjusted = Object.fromEntries(
       Object.entries(p.parameters).map(([key, value]) => [
         key,
-        key === 'hasLid' || key === 'roundness' ? value : compensate(value * factor, p.shrinkage),
+        key === 'hasLid' || key === 'lidStyle' || key === 'roundness'
+          ? value
+          : key === 'lidLift'
+            ? value * factor
+            : compensate(value * factor, p.shrinkage),
       ]),
     );
     return this.factory.create(p.shape, adjusted);
@@ -76,7 +79,11 @@ export class AppComponent {
   readonly fields = computed(() => {
     const parameters = this.store.active()?.parameters ?? {};
     return Object.keys(parameters).filter(
-      (field) => field !== 'hasLid' && (field !== 'lidClearance' || parameters['hasLid'] >= 0.5),
+      (field) =>
+        field !== 'hasLid' &&
+        field !== 'lidStyle' &&
+        ((field !== 'lidClearance' && field !== 'lidLift') || parameters['hasLid'] >= 0.5) &&
+        (field !== 'lidSkirtHeight' || (parameters['hasLid'] >= 0.5 && parameters['lidStyle'] === 2)),
     );
   });
   constructor(store: ProjectStore) {
@@ -84,6 +91,8 @@ export class AppComponent {
   }
   label(field: string) {
     if (field === 'truncated-cone') return 'Frustum';
+    if (field === 'lidLift') return 'Lid Preview Gap';
+    if (field === 'lidSkirtHeight') return 'Lid Skirt Height';
     return field
       .replace(/-/g, ' ')
       .replace(/([A-Z])/g, ' $1')
@@ -95,6 +104,25 @@ export class AppComponent {
   }
   setFrustumPreset(preset: 'tapered' | 'frustum') {
     this.store.update({ parameters: { ...frustumPresets[preset] } });
+  }
+  lidMode(parameters: Record<string, number>) {
+    if (parameters['hasLid'] < 0.5) return 0;
+    return Math.round(parameters['lidStyle']) + 1;
+  }
+  setLidMode(mode: number) {
+    const project = this.store.active();
+    if (!project) return;
+    this.store.update({
+      parameters: {
+        ...project.parameters,
+        hasLid: mode === 0 ? 0 : 1,
+        lidStyle: Math.max(0, mode - 1),
+      },
+    });
+  }
+  openPanel(panel: 'shape' | 'projects' | 'guide') {
+    this.panel.set(panel);
+    this.mobilePanelOpen.set(true);
   }
   error(field: string) {
     return this.issues().find((issue) => issue.field === field)?.message;

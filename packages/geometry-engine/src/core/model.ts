@@ -2,20 +2,25 @@ export interface Point2D {
   x: number;
   y: number;
 }
+
 export interface Point3D {
   x: number;
   y: number;
   z: number;
 }
+
 export interface BoundingBox {
   width: number;
   depth: number;
   height: number;
 }
+
 export interface MeshData {
   vertices: Point3D[];
   indices: number[];
+  bodyVertexCount?: number;
 }
+
 export type TemplateLineKind = 'cut' | 'fold';
 export interface TemplatePath {
   points: Point2D[];
@@ -24,16 +29,19 @@ export interface TemplatePath {
   label?: string;
   assemblyNumber?: number;
 }
+
 export interface TemplateDimensions {
   width: number;
   height: number;
 }
+
 export interface SlabTemplate {
   paths: TemplatePath[];
   dimensions: TemplateDimensions;
   unit: 'mm';
   notes: string[];
 }
+
 export interface ValidationIssue {
   field: string;
   message: string;

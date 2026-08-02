@@ -123,7 +123,7 @@ export class FrustumShape extends BaseShape {
       );
     return mesh;
   }
-  
+
   generateTemplate(): SlabTemplate {
     const { topDiameter: td, bottomDiameter: bd, height: h } = this.parameters;
     if (Math.abs(td - bd) < 0.001)
@@ -138,37 +138,52 @@ export class FrustumShape extends BaseShape {
       outer = (s * Math.max(r1, r2)) / Math.abs(r1 - r2),
       inner = outer - s,
       angle = (2 * Math.PI * Math.abs(r1 - r2)) / s;
-    const points = sectorPoints(inner, outer, angle);
+    const rawPoints = sectorPoints(inner, outer, angle),
+      rotatedPoints = rawPoints.map((point) => ({ x: point.y, y: -point.x })),
+      minimumX = Math.min(...rotatedPoints.map((point) => point.x)),
+      minimumY = Math.min(...rotatedPoints.map((point) => point.y));
+    const points = rotatedPoints.map((point) => ({ x: point.x - minimumX, y: point.y - minimumY }));
+    const sectorHeight = Math.max(...points.map((point) => point.y)),
+      gap = 10,
+      capRowCenterY = sectorHeight + gap + Math.max(bd, td, this.hasLid ? this.lidDiameter : 0) / 2,
+      baseCenterX = bd / 2;
     const paths: SlabTemplate['paths'] = [
       { points, closed: true, kind: 'cut', label: 'Tapered wall', assemblyNumber: 1 },
-      circlePath(outer * 2 + bd / 2 + 10, bd / 2, bd / 2, 'Bottom', 2),
+      circlePath(baseCenterX, capRowCenterY, bd / 2, 'Bottom', 2),
     ];
-    if (this.includeTop) paths.push(circlePath(outer * 2 + bd + td / 2 + 20, td / 2, td / 2, 'Top', 3));
-    if (this.hasLid)
+    let nextCapX = bd + gap;
+    if (this.includeTop) {
+      paths.push(circlePath(nextCapX + td / 2, capRowCenterY, td / 2, 'Top', 3));
+      nextCapX += td + gap;
+    }
+    if (this.hasLid) {
       paths.push(
         circlePath(
-          outer * 2 + bd + this.lidDiameter / 2 + 20,
-          this.lidDiameter / 2,
+          nextCapX + this.lidDiameter / 2,
+          capRowCenterY,
           this.lidDiameter / 2,
           lidLabel(this.parameters),
           3,
         ),
       );
-    if (this.hasLid && isCombinationLid(this.parameters))
+      nextCapX += this.lidDiameter + gap;
+    }
+    if (this.hasLid && isCombinationLid(this.parameters)) {
       paths.push(
         circlePath(
-          outer * 2 + bd + this.lidDiameter + this.insetDiameter / 2 + 30,
-          this.insetDiameter / 2,
+          nextCapX + this.insetDiameter / 2,
+          capRowCenterY,
           this.insetDiameter / 2,
           'Inset stopper',
           4,
         ),
       );
+    }
     if (this.hasLid && isBoxLid(this.parameters))
       paths.push(
         rectangle(
           0,
-          outer * 2 + 10,
+          capRowCenterY + Math.max(bd, td, this.lidDiameter) / 2 + gap,
           Math.PI * (this.lidDiameter - this.parameters.wallThickness),
           this.parameters.lidSkirtHeight,
           'Lid skirt',

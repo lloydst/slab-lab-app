@@ -229,4 +229,17 @@ describe('geometry engine', () => {
         wallThickness: 2,
       }).calculateVolume(),
     ).toBeCloseTo(5497.787));
+
+  it('normalizes the frustum sector to the template origin', () => {
+    const template = new FrustumShape({
+      topDiameter: 90,
+      bottomDiameter: 150,
+      height: 130,
+      wallThickness: 6,
+    }).generateTemplate();
+    const wall = template.paths.find((path) => path.label === 'Tapered wall')!;
+    expect(Math.min(...wall.points.map((point) => point.x))).toBeCloseTo(0);
+    expect(Math.min(...wall.points.map((point) => point.y))).toBeCloseTo(0);
+    expect(template.dimensions.width).toBeLessThan(500);
+  });
 });

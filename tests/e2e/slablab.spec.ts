@@ -126,3 +126,26 @@ test('maps oval-box SVG viewBox units to millimetres without scaling', async ({ 
   expect(metrics.squareUnits).toBe('50');
   expect(metrics.squarePixels / metrics.pixelsPerUnit).toBeCloseTo(50, 3);
 });
+
+test('renders the frustum wall at the left edge of the template', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Frustum$/ }).click();
+  await page.getByRole('button', { name: 'FLAT TEMPLATE' }).click();
+
+  const position = await page.locator('slab-template-preview').evaluate((preview) => {
+    const svg = preview.querySelector('svg')!, wall = svg.querySelector('path.cut')!;
+    const svgBounds = svg.getBoundingClientRect(), wallBounds = wall.getBoundingClientRect(), wallBox = wall.getBBox();
+    return {
+      pathOffset: wallBounds.left - svgBounds.left,
+      pathUnitX: wallBox.x,
+      scrollLeft: preview.scrollLeft,
+      pathWidth: wallBounds.width,
+      svgWidth: svgBounds.width,
+    };
+  });
+
+  expect(position.scrollLeft).toBe(0);
+  expect(position.pathUnitX).toBeCloseTo(12, 3);
+  expect(position.pathOffset).toBeLessThan(60);
+  expect(position.pathWidth).toBeGreaterThan(100);
+});

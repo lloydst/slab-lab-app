@@ -62,6 +62,18 @@ describe('advanced parametric generators', () => {
       );
   });
 
+  it('uses one exact continuous band for a rounded rectangle box', () => {
+    const template = factory
+      .create('rounded-rectangle-box', shapeDefaults['rounded-rectangle-box'])
+      .generateTemplate();
+    expect(template.paths.map((path) => path.label)).toEqual([
+      'Continuous wall band',
+      'Rounded rectangle base',
+    ]);
+    expect(template.panels).toHaveLength(2);
+    expect(template.warnings).toBeUndefined();
+  });
+
   it('uses consistent fired-size shrinkage and unit conversion', () => {
     expect(compensate(100, 12)).toBeCloseTo(113.63636);
     expect(millimetresToUnit(unitToMillimetres(2, 'in'), 'in')).toBeCloseTo(2);

@@ -6,6 +6,6 @@ export class SvgExporter implements TemplateExporter {
   readonly mimeType = 'image/svg+xml';
 
   async export(template: SlabTemplate) {
-    return new Blob([templateToSvg(template)], { type: this.mimeType });
+    return new Blob([templateToSvg(template)], { type: `${this.mimeType};charset=utf-8` });
   }
 }

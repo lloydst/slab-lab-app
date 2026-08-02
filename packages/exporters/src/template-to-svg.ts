@@ -6,10 +6,14 @@ const escapeXml = (value: string) =>
     (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[character]!,
   );
 
+export const svgDocumentDimensions = (template: SlabTemplate) => ({
+  width: Math.max(template.dimensions.width, 50) + 24,
+  height: template.dimensions.height + 94,
+});
+
 export const templateToSvg = (template: SlabTemplate): string => {
   const margin = 12,
-    width = Math.max(template.dimensions.width, 50) + margin * 2,
-    height = template.dimensions.height + margin * 2 + 70;
+    { width, height } = svgDocumentDimensions(template);
   const paths = template.paths
     .map((path) => {
       const data =

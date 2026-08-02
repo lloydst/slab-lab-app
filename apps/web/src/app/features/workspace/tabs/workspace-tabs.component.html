@@ -1,8 +1,6 @@
 <section class="stage">
   <div class="stage-tabs">
-    <button type="button" [class.active]="ui.tab() === 'form'" (click)="ui.tab.set('form')">
-      3D FORM
-    </button>
+    <button type="button" [class.active]="ui.tab() === 'form'" (click)="ui.tab.set('form')">3D FORM</button>
     <button type="button" [class.active]="ui.tab() === 'template'" (click)="ui.tab.set('template')">
       FLAT TEMPLATE
     </button>
@@ -33,7 +31,7 @@
       <button
         type="button"
         mat-stroked-button
-        [disabled]="design.issues().length"
+        [disabled]="design.issues().length > 0"
         (click)="design.export('svg')"
       >
         SVG
@@ -41,7 +39,7 @@
       <button
         type="button"
         mat-stroked-button
-        [disabled]="design.issues().length"
+        [disabled]="design.issues().length > 0"
         (click)="design.export('png')"
       >
         PNG
@@ -50,10 +48,10 @@
         type="button"
         mat-flat-button
         class="primary"
-        [disabled]="design.issues().length"
+        [disabled]="design.issues().length > 0"
         (click)="design.export('pdf')"
       >
-        Download PDF
+        <span class="download-label">Download&nbsp;</span>PDF
       </button>
     </div>
   </footer>

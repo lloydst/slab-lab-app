@@ -1,6 +1,6 @@
 import type { SlabTemplate } from '@slablab/geometry-engine';
 import type { TemplateExporter } from './template-exporter';
-import { templateToSvg } from './template-to-svg';
+import { svgDocumentDimensions, templateToSvg } from './template-to-svg';
 
 const loadImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -19,9 +19,10 @@ export class PngExporter implements TemplateExporter {
     try {
       const image = await loadImage(url);
       const canvas = document.createElement('canvas');
-      const scale = 300 / 25.4;
-      canvas.width = Math.ceil((template.dimensions.width + 24) * scale);
-      canvas.height = Math.ceil((template.dimensions.height + 44) * scale);
+      const scale = 300 / 25.4,
+        dimensions = svgDocumentDimensions(template);
+      canvas.width = Math.ceil(dimensions.width * scale);
+      canvas.height = Math.ceil(dimensions.height * scale);
       const context = canvas.getContext('2d');
       if (!context) throw new Error('Canvas unavailable');
       context.fillStyle = 'white';

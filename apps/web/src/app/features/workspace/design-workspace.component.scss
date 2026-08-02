@@ -1,6 +1,8 @@
 :host {
   display: block;
   height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   color: #1d2920;
   background: #eef0e9;
 }
@@ -9,6 +11,9 @@
   display: grid;
   grid-template-columns: 78px 380px 1fr;
   height: calc(100vh - 70px);
+  height: calc(100dvh - 70px);
+  min-height: 0;
+  overflow: hidden;
 }
 
 slab-workspace-sidebar,

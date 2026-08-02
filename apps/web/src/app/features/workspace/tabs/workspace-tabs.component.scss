@@ -1,23 +1,157 @@
-.stage { min-width: 0; display: grid; grid-template-rows: 54px 1fr 78px; background: #eef0e9; }
-.stage-tabs { display: flex; justify-content: center; gap: 28px; border-bottom: 1px solid #d6d9d2; background: #fafaf7; }
-.stage-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: #7b867e; font-size: 11px; font-weight: 800; letter-spacing: 1px; cursor: pointer; }
-.stage-tabs button.active { border-color: #b75e3b; color: #9e4c31; }
-.stage-body { position: relative; min-height: 0; overflow: hidden; }
-.stage-body slab-preview, .stage-body slab-template-preview { height: 100%; }
-.view-help { position: absolute; bottom: 15px; left: 50%; display: flex; align-items: center; gap: 6px; padding: 7px 13px; border: 1px solid #d7dbd4; border-radius: 20px; background: #ffffffdd; color: #657168; font-size: 10px; white-space: nowrap; transform: translateX(-50%); }
-.view-help mat-icon { width: 16px; height: 16px; font-size: 16px; }
-.export-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-top: 1px solid #d6d9d2; background: #fafaf7; }
-.export-bar > div { display: flex; align-items: center; gap: 10px; }
-.export-bar > div > mat-icon { color: #b75e3b; }
-.export-bar span b, .export-bar span small { display: block; }
-.export-bar span b { font-family: Georgia, serif; font-size: 14px; }
-.export-bar span small { margin-top: 2px; color: #7d877f; font-size: 10px; }
-.export-actions { display: flex; gap: 8px; }
-.primary { background: #bd643f !important; color: white !important; }
-@media (max-width: 1000px) { .export-bar > div:first-child { display: none; } }
+.stage {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 54px minmax(0, 1fr) 78px;
+  background: #eef0e9;
+}
+.stage-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  border-bottom: 1px solid #d6d9d2;
+  background: #fafaf7;
+}
+.stage-tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #7b867e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.stage-tabs button.active {
+  border-color: #b75e3b;
+  color: #9e4c31;
+}
+.stage-body {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.stage-body slab-preview,
+.stage-body slab-template-preview {
+  height: 100%;
+}
+.view-help {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: 1px solid #d7dbd4;
+  border-radius: 20px;
+  background: #ffffffdd;
+  color: #657168;
+  font-size: 10px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.view-help mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+.export-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-top: 1px solid #d6d9d2;
+  background: #fafaf7;
+}
+.export-bar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.export-bar > div > mat-icon {
+  color: #b75e3b;
+}
+.export-bar span b,
+.export-bar span small {
+  display: block;
+}
+.export-bar span b {
+  font-family: Georgia, serif;
+  font-size: 14px;
+}
+.export-bar span small {
+  margin-top: 2px;
+  color: #7d877f;
+  font-size: 10px;
+}
+.export-actions {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.export-actions button {
+  min-width: 0;
+}
+.primary {
+  background: #bd643f !important;
+  color: white !important;
+}
+@media (max-width: 1000px) {
+  .export-bar > div:first-child span {
+    display: none;
+  }
+  .export-bar {
+    padding-inline: 14px;
+  }
+  .export-actions {
+    gap: 5px;
+  }
+  .export-actions button {
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+}
 @media (max-width: 760px) {
-  .stage { position: fixed; inset: 70px 0 0 62px; z-index: 3; }
-  .stage-tabs { justify-content: flex-start; padding-left: 20px; }
-  .export-bar { padding: 0 12px; }
-  .export-actions button:not(:last-child) { display: none; }
+  .stage {
+    position: fixed;
+    inset: 70px 0 0 62px;
+    z-index: 3;
+    height: auto;
+  }
+  .stage-tabs {
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
+  .export-bar {
+    padding: 0 12px;
+  }
+  .export-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .export-actions button {
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .export-bar > div:first-child {
+    display: none;
+  }
+  .export-actions {
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .export-actions button {
+    flex: 1 1 0;
+    padding-inline: 4px;
+    font-size: 10px;
+  }
+  .download-label {
+    display: none;
+  }
 }

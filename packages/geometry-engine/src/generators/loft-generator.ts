@@ -30,10 +30,11 @@ export class LoftGenerator extends BaseShape {
 
   protected sectionValues() {
     const p = this.parameters,
-      middleWidth = p.midWidth || Math.max(p.bottomWidth, p.topWidth) * 1.15;
+      middleWidth = p.midWidth || Math.max(p.bottomWidth, p.topWidth) * 1.15,
+      middleHeight = this.style === 'teardrop' ? p.height * 0.36 : p.height * 0.5;
     return [
       { y: 0, width: p.bottomWidth, depth: p.bottomDepth },
-      { y: p.height * 0.5, width: middleWidth, depth: p.midDepth || middleWidth },
+      { y: middleHeight, width: middleWidth, depth: p.midDepth || middleWidth },
       { y: p.height, width: p.topWidth, depth: p.topDepth },
     ];
   }
@@ -68,7 +69,8 @@ export class LoftGenerator extends BaseShape {
   generatePanels() {
     const sections = this.sections(),
       count = this.sectionCount(),
-      panels: Panel[] = [];
+      panels: Panel[] = [],
+      usesAssemblyLabels = this.style === 'teardrop' || this.style === 'organic';
     for (let section = 0; section < sections.length - 1; section++)
       for (let index = 0; index < count; index++) {
         const lower = sections[section]!,
@@ -83,14 +85,31 @@ export class LoftGenerator extends BaseShape {
           index,
           count,
         );
-        panels.push({ ...panel, label: `Band ${section + 1}, panel ${index + 1}` });
+        const position = index + 1;
+        panels.push({
+          ...panel,
+          label: usesAssemblyLabels
+            ? section === 0
+              ? `L${position} base→belly`
+              : `U${position} belly→rim`
+            : `Band ${section + 1}, panel ${position}`,
+        });
       }
     if (this.parameters.includeBase !== 0) panels.push(createBasePanel(sections[0]!.points));
     return panels;
   }
 
   generateTemplate() {
+    const assemblyNotes =
+      this.style === 'teardrop' || this.style === 'organic'
+        ? [
+            'Assembly: join each lower panel to the upper panel with the same number (L1 to U1, L2 to U2, etc.).',
+            `Join numbered positions in order around the form; position ${this.sectionCount()} wraps back to position 1.`,
+            'Orient BASE edges downward, BELLY edges together, and RIM edges upward.',
+          ]
+        : [];
     return layoutPanels(this.generatePanels(), [
+      ...assemblyNotes,
       'Loft panels are a faceted approximation; clay must accommodate small curvature changes at horizontal joins.',
     ]);
   }

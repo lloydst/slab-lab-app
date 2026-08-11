@@ -76,8 +76,8 @@ describe('geometry engine', () => {
     const lidWidth =
       Math.max(...vaseLid!.points.map((point) => point.x)) -
       Math.min(...vaseLid!.points.map((point) => point.x));
-    // A vase's top diameter describes its opening, so wall thickness must not be removed twice.
-    expect(lidWidth).toBeCloseTo(78);
+    // The inset fits the inside opening after wall thickness and clearance are removed.
+    expect(lidWidth).toBeCloseTo(68);
   });
 
   it('offers overhanging cover lids for rectangular and round forms', () => {
@@ -180,6 +180,28 @@ describe('geometry engine', () => {
     expect(top!.points[1].x - top!.points[0].x).toBe(100);
     expect(stopper!.points[1].x - stopper!.points[0].x).toBe(86);
     expect(box.generateMesh().vertices).toHaveLength(28);
+  });
+
+  it('lays every rectangular lid clear of the body template', () => {
+    for (const lidStyle of [0, 1, 2, 3]) {
+      const template = new BoxShape({
+        width: 100,
+        depth: 35,
+        height: 160,
+        wallThickness: 5,
+        hasLid: 1,
+        lidStyle,
+        lidClearance: 8,
+        lidLift: 20,
+        lidSkirtHeight: 45,
+      }).generateTemplate();
+      const body = template.paths.slice(0, 5);
+      const lids = template.paths.slice(5).filter((path) => path.kind === 'cut');
+      const bodyBottom = Math.max(...body.flatMap((path) => path.points.map((point) => point.y)));
+      expect(Math.min(...lids.flatMap((path) => path.points.map((point) => point.y)))).toBeGreaterThan(
+        bodyBottom,
+      );
+    }
   });
 
   it('uses the same adjustable oval outline for the mesh and base template', () => {

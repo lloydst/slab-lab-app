@@ -1,2 +1,28 @@
-<div class="scale-indicator">Print at 100% for a true-to-size template</div>
-<div class="paper" [innerHTML]="svg()"></div>
+<div class="toolbar">
+  <div class="scale-indicator">Print at 100% for a true-to-size template</div>
+  <div class="zoom-controls" aria-label="Template zoom controls">
+    <button type="button" mat-icon-button aria-label="Zoom out" (click)="zoomBy(-25)">
+      <mat-icon>remove</mat-icon>
+    </button>
+    <button type="button" mat-button aria-label="Reset zoom" (click)="resetZoom()">{{ zoom() }}%</button>
+    <button type="button" mat-icon-button aria-label="Zoom in" (click)="zoomBy(25)">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>
+<div
+  #paper
+  class="paper"
+  [class.is-panning]="isPanning()"
+  aria-label="Template canvas. Drag to pan and pinch or scroll to zoom"
+  (wheel)="onWheel($event)"
+  (pointerdown)="onPointerDown($event)"
+  (pointerup)="onPointerEnd($event)"
+  (pointercancel)="onPointerEnd($event)"
+>
+  <div
+    class="document"
+    [style.--template-zoom]="zoom() / 100"
+    [innerHTML]="svg()"
+  ></div>
+</div>

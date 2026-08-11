@@ -97,9 +97,9 @@ export const panelBetweenRings = (
   };
 };
 
-export const createBasePanel = (points: readonly Point2D[], id = 'base'): Panel => ({
+export const createBasePanel = (points: readonly Point2D[], id = 'base', label = 'Base'): Panel => ({
   id,
-  label: 'Base',
+  label,
   outline: [...points],
   edges: points.map((point, index) => ({
     id: `${id}-e${index}`,

@@ -39,4 +39,5 @@ export class WorkspaceFormHarness extends ComponentHarness {
     }
     throw new Error(`Could not find dimension "${label}".`);
   }
+
 }

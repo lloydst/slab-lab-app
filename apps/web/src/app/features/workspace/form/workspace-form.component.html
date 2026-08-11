@@ -54,7 +54,7 @@
     </button>
   } @else {
     <div class="section-heading">
-      <span>Pick a shape then customize it.</span>
+      <span>Pick a shape and customize it below.</span>
     </div>
     <div class="shape-grid">
       @for (item of design.shapes; track item.kind) {
@@ -74,17 +74,6 @@
         <h2>{{ design.label(project.shape) }}</h2>
         <span>Finished dimensions before firing.</span>
       </div>
-      @if (project.shape === 'truncated-cone') {
-        <div class="preset-row" aria-label="Frustum presets">
-          <span>Starting profile</span>
-          <button type="button" mat-stroked-button (click)="design.setFrustumPreset('tapered')">
-            Tapered cylinder
-          </button>
-          <button type="button" mat-stroked-button (click)="design.setFrustumPreset('frustum')">
-            Frustum
-          </button>
-        </div>
-      }
       @if (project.parameters['hasLid'] !== undefined) {
         <label class="lid-mode">
           <span>Lid type</span>
@@ -120,16 +109,28 @@
         @for (field of design.fields(); track field) {
           <label [class.invalid]="design.error(field)">
             <span>{{ design.label(field) }}</span>
-            <div>
-              <input
-                type="number"
-                [min]="field === 'roundness' || field === 'lidLift' ? 0 : 0.1"
-                [max]="field === 'roundness' ? 100 : null"
-                step="1"
-                [ngModel]="design.displayParameter(field)"
-                (ngModelChange)="design.setParameter(field, $event)"
-              /><em>{{ field === 'roundness' ? '%' : project.unit }}</em>
-            </div>
+            @if (field === 'closedTop') {
+              <div class="boolean-field">
+                <mat-slide-toggle
+                  aria-label="Closed Top"
+                  [checked]="project.parameters[field] === 1"
+                  (change)="design.setParameter(field, $event.checked ? 1 : 0)"
+                >
+                  {{ project.parameters[field] === 1 ? 'Yes' : 'No' }}
+                </mat-slide-toggle>
+              </div>
+            } @else {
+              <div>
+                <input
+                  type="number"
+                  [min]="field === 'roundness' || field === 'lidLift' ? 0 : 0.1"
+                  [max]="field === 'roundness' ? 100 : null"
+                  step="1"
+                  [ngModel]="design.displayParameter(field)"
+                  (ngModelChange)="design.setParameter(field, $event)"
+                /><em>{{ field === 'roundness' ? '%' : project.unit }}</em>
+              </div>
+            }
             <small>{{ design.error(field) }}</small>
           </label>
         }

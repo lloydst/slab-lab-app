@@ -2,6 +2,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSelectHarness } from '@angular/material/select/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { describe, expect, it } from 'vitest';
@@ -62,22 +63,75 @@ describe('WorkspaceFormComponent', () => {
     expect(store.active()?.parameters).toMatchObject({ width: 150, depth: 150, height: 150 });
   });
 
-  it('hides dimensions that are coupled by regular and square forms', async () => {
+  it('hides dimensions that are coupled by regular forms', async () => {
     const { loader } = await setup();
     const form = await loader.getHarness(WorkspaceFormHarness);
-    await form.selectShape('Square pyramid');
-    expect(await form.getDimensionLabels()).toEqual([
-      'Bottom Side Length',
-      'Top Side Length',
-      'Height',
-      'Wall Thickness',
-      'Include Base',
-      'Closed Top',
-    ]);
     await form.selectShape('Polygonal vase');
     expect(await form.getDimensionLabels()).not.toEqual(
       expect.arrayContaining(['Bottom Depth', 'Mid Depth', 'Top Depth']),
     );
+  });
+
+  it('does not offer the square-constrained duplicate of the tapered box', async () => {
+    const { loader } = await setup();
+    const form = await loader.getHarness(WorkspaceFormHarness);
+    await expect(form.selectShape('Square pyramid')).rejects.toThrow(
+      'Could not find shape "Square pyramid".',
+    );
+  });
+
+  it('does not offer the rounded-box duplicate of the oval box', async () => {
+    const { loader } = await setup();
+    const form = await loader.getHarness(WorkspaceFormHarness);
+    await expect(form.selectShape('Rounded box')).rejects.toThrow(
+      'Could not find shape "Rounded box".',
+    );
+  });
+
+  it('shows the frustum dimensions without a redundant starting profile', async () => {
+    const { fixture, loader } = await setup();
+    const form = await loader.getHarness(WorkspaceFormHarness);
+    await form.selectShape('Frustum');
+    expect(await form.getDimensionLabels()).toEqual([
+      'Top Diameter',
+      'Bottom Diameter',
+      'Height',
+      'Wall Thickness',
+    ]);
+    expect(fixture.nativeElement.textContent).not.toContain('Starting profile');
+  });
+
+  it('offers lid controls for the faceted bowl', async () => {
+    const { loader, store } = await setup();
+    const form = await loader.getHarness(WorkspaceFormHarness);
+    await form.selectShape('Faceted bowl');
+    const lid = await loader.getHarness(MatSelectHarness.with({ selector: '[aria-label="Lid type"]' }));
+    await lid.open();
+    await lid.clickOptions({ text: 'Top + inset stopper' });
+    expect(store.active()?.parameters).toMatchObject({ hasLid: 1, lidStyle: 3 });
+  });
+
+  it('uses one radius for regular prisms', async () => {
+    const { design, loader, store } = await setup();
+    const form = await loader.getHarness(WorkspaceFormHarness);
+    for (const label of ['Hexagonal prism', 'Octagonal prism']) {
+      await form.selectShape(label);
+      expect(await form.getDimensionLabels()).toEqual([
+        'Radius',
+        'Height',
+        'Wall Thickness',
+        'Include Base',
+        'Closed Top',
+      ]);
+      await form.setDimension('Radius', '90');
+      expect(store.active()?.parameters).toMatchObject({ bottomRadius: 90, topRadius: 90 });
+      const closedTop = await loader.getHarness(MatSlideToggleHarness);
+      expect(await closedTop.getAriaLabel()).toBe('Closed Top');
+      expect(await closedTop.isChecked()).toBe(false);
+      await closedTop.toggle();
+      expect(store.active()?.parameters['closedTop']).toBe(1);
+      expect(design.hasClosedTop()).toBe(true);
+    }
   });
 
   it('converts displayed fields with the Material units select while storing millimetres', async () => {

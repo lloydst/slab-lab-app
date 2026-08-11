@@ -145,15 +145,16 @@ export class BoxShape extends BaseShape {
       rectangle(2 * w + 2 * gap, h + gap, d, h, 'Left', 5),
     ];
     if (this.includeTop) paths.push(rectangle(0, d + gap, w, d, 'Top', 6));
+    const lidY = Math.max(...paths.flatMap((path) => path.points.map((point) => point.y))) + gap;
     if (this.hasLid && !isBoxLid(this.parameters))
-      paths.push(rectangle(0, d + gap, this.lidWidth, this.lidDepth, lidLabel(this.parameters), 6));
+      paths.push(rectangle(0, lidY, this.lidWidth, this.lidDepth, lidLabel(this.parameters), 6));
     if (this.hasLid && isCombinationLid(this.parameters))
       paths.push(
-        rectangle(this.lidWidth + gap, d + gap, this.insetWidth, this.insetDepth, 'Inset stopper', 7),
+        rectangle(this.lidWidth + gap, lidY, this.insetWidth, this.insetDepth, 'Inset stopper', 7),
       );
     if (this.hasLid && isBoxLid(this.parameters))
       paths.push(
-        ...rectangularLidNet(0, d + gap, this.lidWidth, this.lidDepth, this.parameters.lidSkirtHeight),
+        ...rectangularLidNet(0, lidY, this.lidWidth, this.lidDepth, this.parameters.lidSkirtHeight),
       );
     return {
       paths,

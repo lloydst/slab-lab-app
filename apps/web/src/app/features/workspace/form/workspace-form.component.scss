@@ -94,6 +94,15 @@
   outline: 0;
   background: var(--color-transparent);
 }
+.field-grid .boolean-field {
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 10px;
+}
+.field-grid .boolean-field mat-slide-toggle {
+  font-size: 11px;
+}
 .field-grid em,
 .shrink em {
   padding: 11px;
@@ -204,23 +213,6 @@
 .primary {
   background: var(--color-accent) !important;
   color: var(--color-on-accent) !important;
-}
-.preset-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 16px;
-}
-.preset-row > span {
-  grid-column: 1 / -1;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-}
-.preset-row button {
-  font-size: 11px;
 }
 .lid-mode {
   display: block;

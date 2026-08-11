@@ -50,6 +50,35 @@ describe('advanced parametric generators', () => {
     }
   });
 
+  it('keeps both ends of hexagonal and octagonal prisms equal', () => {
+    for (const kind of ['hexagonal-prism', 'octagonal-prism'] as const) {
+      const shape = factory.create(kind, {
+        ...shapeDefaults[kind],
+        bottomRadius: 75,
+        topRadius: 30,
+      });
+      expect(shape.calculateDimensions()).toEqual({ width: 150, depth: 150, height: 140 });
+      const walls = shape.generateTemplate().panels!.slice(0, kind === 'hexagonal-prism' ? 6 : 8);
+      for (const wall of walls) {
+        expect(distance(wall.outline[0]!, wall.outline[1]!)).toBeCloseTo(
+          distance(wall.outline[2]!, wall.outline[3]!),
+        );
+      }
+    }
+  });
+
+  it('adds a printable top panel when a regular prism is closed', () => {
+    for (const kind of ['hexagonal-prism', 'octagonal-prism'] as const) {
+      const open = factory.create(kind, shapeDefaults[kind]).generateTemplate();
+      const closed = factory
+        .create(kind, { ...shapeDefaults[kind], closedTop: 1 })
+        .generateTemplate();
+      expect(open.paths.map((path) => path.label)).not.toContain('Top');
+      expect(closed.paths.map((path) => path.label)).toContain('Top');
+      expect(closed.paths).toHaveLength(open.paths.length + 1);
+    }
+  });
+
   it('keeps tapered box adjacent vertical seams equal', () => {
     const panels = factory
       .create('tapered-box', shapeDefaults['tapered-box'])
@@ -60,6 +89,16 @@ describe('advanced parametric generators', () => {
         distance(panels[(i + 1) % 4]!.outline[3]!, panels[(i + 1) % 4]!.outline[0]!),
         6,
       );
+  });
+
+  it('adds a printable tapered-box top only when it is closed', () => {
+    const open = factory.create('tapered-box', shapeDefaults['tapered-box']).generateTemplate();
+    const closed = factory
+      .create('tapered-box', { ...shapeDefaults['tapered-box'], closedTop: 1 })
+      .generateTemplate();
+    expect(open.paths.map((path) => path.label)).not.toContain('Top');
+    expect(closed.paths.map((path) => path.label)).toContain('Top');
+    expect(closed.paths).toHaveLength(open.paths.length + 1);
   });
 
   it('keeps square and regular-polygon dimensions coupled', () => {
@@ -90,6 +129,38 @@ describe('advanced parametric generators', () => {
     expect(template.panels).toHaveLength(2);
     expect(template.warnings).toBeUndefined();
   });
+
+  it('gives the teardrop a low, full belly and narrow ends by default', () => {
+    const shape = factory.create('teardrop-vessel', shapeDefaults['teardrop-vessel']);
+    const mesh = shape.generateMesh();
+    const sides = shapeDefaults['teardrop-vessel'].sides;
+    expect(mesh.vertices[sides]!.y).toBeCloseTo(shapeDefaults['teardrop-vessel'].height * 0.36);
+    expect(shape.calculateDimensions()).toEqual({ width: 185, depth: 155, height: 240 });
+    expect(shapeDefaults['teardrop-vessel'].bodyWidth).toBeGreaterThan(
+      shapeDefaults['teardrop-vessel'].baseWidth * 3,
+    );
+    expect(shapeDefaults['teardrop-vessel'].topOpening).toBeLessThan(
+      shapeDefaults['teardrop-vessel'].bodyWidth / 8,
+    );
+  });
+
+  it.each(['teardrop-vessel', 'organic-lofted-vessel'] as const)(
+    'labels %s panels with matching vertical assembly positions',
+    (kind) => {
+      const template = factory.create(kind, shapeDefaults[kind]).generateTemplate();
+      const count = shapeDefaults[kind].sides || shapeDefaults[kind].points;
+      expect(template.paths[0]?.label).toBe('L1 base→belly');
+      expect(template.paths[count]?.label).toBe('U1 belly→rim');
+      expect(template.paths[count - 1]?.label).toBe(`L${count} base→belly`);
+      expect(template.warnings).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('L1 to U1'),
+          expect.stringContaining(`position ${count} wraps back to position 1`),
+          expect.stringContaining('BASE edges downward'),
+        ]),
+      );
+    },
+  );
 
   it('uses consistent fired-size shrinkage and unit conversion', () => {
     expect(compensate(100, 12)).toBeCloseTo(113.63636);

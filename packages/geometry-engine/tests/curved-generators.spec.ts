@@ -22,7 +22,9 @@ describe('curved profile generators', () => {
     const shape = new LoftGenerator(loftParameters, style);
     expect(shape.generateMesh().vertices.length).toBeGreaterThan(20);
     expect(shape.generatePanels()).toHaveLength(17);
-    expect(shape.generateTemplate().warnings).toHaveLength(1);
+    expect(shape.generateTemplate().warnings).toHaveLength(
+      style === 'organic' || style === 'teardrop' ? 4 : 1,
+    );
     expect(shape.calculateDimensions()).toEqual({ width: 110, depth: 90, height: 140 });
     expect(shape.calculateSurfaceArea()).toBeGreaterThan(0);
     expect(shape.calculateVolume()).toBeGreaterThan(0);

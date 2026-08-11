@@ -2,7 +2,6 @@ import { computed, inject, Injectable } from '@angular/core';
 import { downloadBlob, PdfExporter, PngExporter, SvgExporter } from '@slablab/exporters';
 import {
   compensate,
-  frustumPresets,
   millimetresToUnit,
   ShapeFactory,
 } from '@slablab/geometry-engine';
@@ -15,13 +14,14 @@ import {
 import { ProjectStore } from '../../../data-access/projects/project.store';
 
 export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png';
+type ShapeOption = { kind: ShapeKind; label: string; glyph: string };
 
 @Injectable()
 export class WorkspaceDesignService {
   readonly store = inject(ProjectStore);
   private readonly factory = new ShapeFactory();
 
-  readonly shapes: { kind: ShapeKind; label: string; glyph: string }[] = [
+  readonly shapes: ShapeOption[] = ([
     { kind: 'cylinder', label: 'Cylinder', glyph: '◯' },
     { kind: 'cube', label: 'Cube', glyph: '□' },
     { kind: 'box', label: 'Box', glyph: '▭' },
@@ -40,7 +40,10 @@ export class WorkspaceDesignService {
     { kind: 'gored-sphere', label: 'Gored sphere', glyph: '◉' },
     { kind: 'teardrop-vessel', label: 'Teardrop', glyph: '◒' },
     { kind: 'organic-lofted-vessel', label: 'Organic loft', glyph: '≈' },
-  ];
+  ] as ShapeOption[]).filter(
+    (shape) =>
+      shape.kind !== 'truncated-square-pyramid' && shape.kind !== 'rounded-rectangle-box',
+  );
   readonly shape = computed(() => {
     const project = this.store.active();
     if (!project) return null;
@@ -70,8 +73,14 @@ export class WorkspaceDesignService {
     };
   });
   readonly hasClosedTop = computed(() => {
-    const kind = this.store.active()?.shape;
-    return kind === 'cylinder' || kind === 'cube' || kind === 'truncated-cone';
+    const project = this.store.active();
+    if (!project) return false;
+    return (
+      project.shape === 'cylinder' ||
+      project.shape === 'cube' ||
+      project.shape === 'truncated-cone' ||
+      project.parameters['closedTop'] === 1
+    );
   });
   readonly thicknessLabel = computed(() => {
     const project = this.store.active();
@@ -85,6 +94,8 @@ export class WorkspaceDesignService {
     const hiddenFields =
       project?.shape === 'cube'
         ? new Set(['depth', 'height'])
+        : project?.shape === 'hexagonal-prism' || project?.shape === 'octagonal-prism'
+          ? new Set(['topRadius'])
         : project?.shape === 'truncated-square-pyramid'
           ? new Set(['bottomDepth', 'topDepth'])
           : project?.shape === 'polygonal-vase'
@@ -103,6 +114,8 @@ export class WorkspaceDesignService {
   label(field: string): string {
     const shape = this.store.active()?.shape;
     if (shape === 'cube' && field === 'width') return 'Side Length';
+    if ((shape === 'hexagonal-prism' || shape === 'octagonal-prism') && field === 'bottomRadius')
+      return 'Radius';
     if (shape === 'truncated-square-pyramid' && field === 'bottomWidth') return 'Bottom Side Length';
     if (shape === 'truncated-square-pyramid' && field === 'topWidth') return 'Top Side Length';
     if (shape === 'polygonal-vase' && field === 'bottomWidth') return 'Bottom Diameter';
@@ -124,6 +137,9 @@ export class WorkspaceDesignService {
       const coupledParameters: Record<string, number> =
         project.shape === 'cube' && field === 'width'
           ? { depth: millimetres, height: millimetres }
+          : (project.shape === 'hexagonal-prism' || project.shape === 'octagonal-prism') &&
+              field === 'bottomRadius'
+            ? { topRadius: millimetres }
           : project.shape === 'truncated-square-pyramid' && field === 'bottomWidth'
             ? { bottomDepth: millimetres }
             : project.shape === 'truncated-square-pyramid' && field === 'topWidth'
@@ -153,10 +169,6 @@ export class WorkspaceDesignService {
 
   setUnit(unit: MeasurementUnit): void {
     this.store.update({ unit });
-  }
-
-  setFrustumPreset(preset: 'tapered' | 'frustum'): void {
-    this.store.update({ parameters: { ...frustumPresets[preset] } });
   }
 
   lidMode(parameters: Record<string, number>): number {

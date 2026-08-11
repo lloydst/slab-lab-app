@@ -15,14 +15,18 @@ export const ensureAngularTestEnvironment = (): void => {
 export const resolveAngularComponentResources = async (): Promise<void> => {
   await ɵresolveComponentResources(async (resourceUrl) => {
     const webRoot = basename(process.cwd()) === 'web' ? process.cwd() : resolve(process.cwd(), 'apps/web');
+    const featurePath = resourceUrl.includes('template-preview')
+      ? 'src/app/features/template-preview'
+      : `src/app/features/workspace/${
+          resourceUrl.includes('workspace-header')
+            ? 'header'
+            : resourceUrl.includes('workspace-sidebar')
+              ? 'sidebar'
+              : 'form'
+        }`;
     const resourcePath = resolve(
       webRoot,
-      'src/app/features/workspace',
-      resourceUrl.includes('workspace-header')
-        ? 'header'
-        : resourceUrl.includes('workspace-sidebar')
-          ? 'sidebar'
-          : 'form',
+      featurePath,
       basename(resourceUrl),
     );
 

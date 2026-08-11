@@ -127,6 +127,10 @@ export const shapeDefaults: Record<string, Params> = {
     facets: 10,
     wallThickness: 6,
     includeBase: 6,
+    hasLid: 0,
+    lidStyle: 0,
+    lidClearance: 1.5,
+    lidLift: 30,
   },
   'gored-sphere': {
     diameter: 180,
@@ -139,12 +143,12 @@ export const shapeDefaults: Record<string, Params> = {
   },
   'teardrop-vessel': {
     sides: 16,
-    baseWidth: 70,
-    baseDepth: 65,
-    bodyWidth: 170,
-    bodyDepth: 145,
-    topOpening: 35,
-    height: 220,
+    baseWidth: 48,
+    baseDepth: 42,
+    bodyWidth: 185,
+    bodyDepth: 155,
+    topOpening: 22,
+    height: 240,
     rotation: 0,
     wallThickness: 6,
     includeBase: 6,
@@ -164,7 +168,3 @@ export const shapeDefaults: Record<string, Params> = {
   },
 };
 
-export const frustumPresets: Record<'tapered' | 'frustum', Params> = {
-  tapered: { topDiameter: 110, bottomDiameter: 140, height: 160, wallThickness: 6 },
-  frustum: { topDiameter: 90, bottomDiameter: 150, height: 130, wallThickness: 6 },
-};

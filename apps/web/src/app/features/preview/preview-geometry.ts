@@ -34,15 +34,34 @@ export const createInnerSurface = (
 
   const innerGeometry = outerGeometry.clone();
   const positions = innerGeometry.getAttribute('position');
-  const centerX = (bounds.min.x + bounds.max.x) / 2;
-  const centerZ = (bounds.min.z + bounds.max.z) / 2;
-  const scaleX = (width - thickness * 2) / width;
-  const scaleZ = (depth - thickness * 2) / depth;
+  const sections = new Map<number, { minX: number; maxX: number; minZ: number; maxZ: number }>();
+  for (let index = 0; index < positions.count; index += 1) {
+    const y = positions.getY(index);
+    const section = sections.get(y) ?? {
+      minX: Number.POSITIVE_INFINITY,
+      maxX: Number.NEGATIVE_INFINITY,
+      minZ: Number.POSITIVE_INFINITY,
+      maxZ: Number.NEGATIVE_INFINITY,
+    };
+    section.minX = Math.min(section.minX, positions.getX(index));
+    section.maxX = Math.max(section.maxX, positions.getX(index));
+    section.minZ = Math.min(section.minZ, positions.getZ(index));
+    section.maxZ = Math.max(section.maxZ, positions.getZ(index));
+    sections.set(y, section);
+  }
   const innerBottom = bounds.min.y + thickness;
   const innerTop = bounds.max.y;
 
   for (let index = 0; index < positions.count; index += 1) {
-    const normalizedHeight = (positions.getY(index) - bounds.min.y) / height;
+    const y = positions.getY(index);
+    const section = sections.get(y)!;
+    const sectionWidth = section.maxX - section.minX;
+    const sectionDepth = section.maxZ - section.minZ;
+    const centerX = (section.minX + section.maxX) / 2;
+    const centerZ = (section.minZ + section.maxZ) / 2;
+    const scaleX = Math.max(0, sectionWidth - thickness * 2) / sectionWidth;
+    const scaleZ = Math.max(0, sectionDepth - thickness * 2) / sectionDepth;
+    const normalizedHeight = (y - bounds.min.y) / height;
     positions.setXYZ(
       index,
       centerX + (positions.getX(index) - centerX) * scaleX,
@@ -142,10 +161,16 @@ export const createRim = (outerGeometry: THREE.BufferGeometry, thickness: number
   const outline = convexHull([...topPoints.values()]);
   if (outline.length < 3) return undefined;
 
-  const centerX = (bounds.min.x + bounds.max.x) / 2;
-  const centerZ = (bounds.min.z + bounds.max.z) / 2;
-  const scaleX = (width - thickness * 2) / width;
-  const scaleZ = (depth - thickness * 2) / depth;
+  const topMinX = Math.min(...outline.map((point) => point.x));
+  const topMaxX = Math.max(...outline.map((point) => point.x));
+  const topMinZ = Math.min(...outline.map((point) => point.y));
+  const topMaxZ = Math.max(...outline.map((point) => point.y));
+  const topWidth = topMaxX - topMinX;
+  const topDepth = topMaxZ - topMinZ;
+  const centerX = (topMinX + topMaxX) / 2;
+  const centerZ = (topMinZ + topMaxZ) / 2;
+  const scaleX = (topWidth - thickness * 2) / topWidth;
+  const scaleZ = (topDepth - thickness * 2) / topDepth;
   const rimPositions = outline.flatMap((point) => [
     point.x,
     bounds.max.y,

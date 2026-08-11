@@ -53,6 +53,7 @@ export class TaperedBoxGenerator extends BaseShape {
       ),
     );
     if (this.parameters.includeBase !== 0) panels.push(createBasePanel(rings.bottom));
+    if (this.parameters.closedTop === 1) panels.push(createBasePanel(rings.top, 'top', 'Top'));
     return panels;
   }
 

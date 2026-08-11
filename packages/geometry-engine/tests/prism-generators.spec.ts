@@ -5,7 +5,8 @@ import { TaperedBoxGenerator } from '../src/generators/tapered-box-generator';
 describe('prismatic generators', () => {
   it('supports tapered polygon prisms without bases and with closed tops', () => {
     const shape = new PolygonPrismGenerator({ sides: 5, bottomRadius: 40, topRadius: 25, height: 80, wallThickness: 4, includeBase: 0, closedTop: 1 });
-    expect(shape.generatePanels()).toHaveLength(5);
+    expect(shape.generatePanels()).toHaveLength(6);
+    expect(shape.generateTemplate().paths.at(-1)?.label).toBe('Top');
     expect(shape.generateMesh().vertices).toHaveLength(11);
     expect(shape.calculateDimensions()).toEqual({ width: 80, depth: 80, height: 80 });
     expect(shape.calculateSurfaceArea()).toBeGreaterThan(0);
@@ -28,7 +29,8 @@ describe('prismatic generators', () => {
 
   it('calculates tapered-box dimensions, panels, area, and frustum volume', () => {
     const shape = new TaperedBoxGenerator({ bottomWidth: 100, bottomDepth: 80, topWidth: 70, topDepth: 60, height: 90, wallThickness: 5, includeBase: 0, closedTop: 1 });
-    expect(shape.generatePanels()).toHaveLength(4);
+    expect(shape.generatePanels()).toHaveLength(5);
+    expect(shape.generateTemplate().paths.at(-1)?.label).toBe('Top');
     expect(shape.generateMesh().vertices).toHaveLength(9);
     expect(shape.calculateDimensions()).toEqual({ width: 100, depth: 80, height: 90 });
     expect(shape.calculateSurfaceArea()).toBeGreaterThan(8000);

@@ -4,13 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WorkspaceDesignService } from '../services/workspace-design.service';
 import { WorkspaceUiService } from '../services/workspace-ui.service';
 
 @Component({
   selector: 'slab-workspace-form',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, MatButtonModule, MatIconModule, MatSelectModule],
+  imports: [
+    DecimalPipe,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+  ],
   templateUrl: './workspace-form.component.html',
   styleUrl: './workspace-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

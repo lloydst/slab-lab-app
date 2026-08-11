@@ -28,7 +28,8 @@ describe('geometry engine', () => {
   });
 
   it('keeps cube meshes closed with matching top and bottom panels', () => {
-    const shape = new CubeShape({ width: 100, depth: 100, height: 100, wallThickness: 5 });
+    const shape = new CubeShape({ width: 100, depth: 80, height: 60, wallThickness: 5 });
+    expect(shape.calculateDimensions()).toEqual({ width: 100, depth: 100, height: 100 });
     expect(shape.generateTemplate().paths.map((path) => path.label)).toContain('Top');
     expect(shape.generateTemplate().paths).toHaveLength(6);
     expect(shape.generateMesh().indices).toHaveLength(36);

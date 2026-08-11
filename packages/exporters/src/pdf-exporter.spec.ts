@@ -38,4 +38,22 @@ describe('PDF exporter', () => {
     expect(pdf).toContain('0 232.441 595.276 609.449 re W n');
     expect(pdf).toContain('/MediaBox [0 0 595.276 841.89]');
   });
+
+  it('renders dashed blue fold paths and their labels', async () => {
+    const pdf = await readPdf({
+      paths: [{
+        points: [{ x: 0, y: 0 }, { x: 40, y: 0 }],
+        closed: false,
+        kind: 'fold',
+        label: 'Fold A',
+        assemblyNumber: 2,
+      }],
+      dimensions: { width: 40, height: 10 },
+      unit: 'mm',
+      notes: [],
+    });
+    expect(pdf).toContain('0.141 0.427 0.545 RG');
+    expect(pdf).toContain('[8.504 5.669] 0 d');
+    expect(pdf).toContain('<3220466f6c642041> Tj');
+  });
 });

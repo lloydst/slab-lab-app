@@ -62,6 +62,23 @@ describe('advanced parametric generators', () => {
       );
   });
 
+  it('keeps square and regular-polygon dimensions coupled', () => {
+    const pyramid = factory.create('truncated-square-pyramid', {
+      ...shapeDefaults['truncated-square-pyramid'],
+      bottomDepth: 20,
+      topDepth: 30,
+    });
+    expect(pyramid.calculateDimensions()).toEqual({ width: 150, depth: 150, height: 130 });
+
+    const vase = factory.create('polygonal-vase', {
+      ...shapeDefaults['polygonal-vase'],
+      bottomDepth: 20,
+      midDepth: 30,
+      topDepth: 40,
+    });
+    expect(vase.calculateDimensions()).toEqual({ width: 150, depth: 150, height: 200 });
+  });
+
   it('uses one exact continuous band for a rounded rectangle box', () => {
     const template = factory
       .create('rounded-rectangle-box', shapeDefaults['rounded-rectangle-box'])

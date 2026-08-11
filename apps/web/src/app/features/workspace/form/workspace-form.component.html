@@ -54,7 +54,7 @@
     </button>
   } @else {
     <div class="section-heading">
-      <span>Start with a Geometric shape.</span>
+      <span>Pick a shape then customize it.</span>
     </div>
     <div class="shape-grid">
       @for (item of design.shapes; track item.kind) {
@@ -137,11 +137,7 @@
       <div class="settings-row">
         <label>
           <span>Units</span>
-          <mat-select
-            aria-label="Units"
-            [ngModel]="project.unit"
-            (ngModelChange)="design.setUnit($event)"
-          >
+          <mat-select aria-label="Units" [ngModel]="project.unit" (ngModelChange)="design.setUnit($event)">
             <mat-option value="mm">Millimeters</mat-option>
             <mat-option value="cm">Centimeters</mat-option>
             <mat-option value="in">Inches</mat-option>

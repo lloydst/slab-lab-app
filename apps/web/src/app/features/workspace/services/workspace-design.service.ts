@@ -80,9 +80,19 @@ export class WorkspaceDesignService {
       : '';
   });
   readonly fields = computed(() => {
-    const parameters = this.store.active()?.parameters ?? {};
+    const project = this.store.active();
+    const parameters = project?.parameters ?? {};
+    const hiddenFields =
+      project?.shape === 'cube'
+        ? new Set(['depth', 'height'])
+        : project?.shape === 'truncated-square-pyramid'
+          ? new Set(['bottomDepth', 'topDepth'])
+          : project?.shape === 'polygonal-vase'
+            ? new Set(['bottomDepth', 'midDepth', 'topDepth'])
+            : new Set<string>();
     return Object.keys(parameters).filter(
       (field) =>
+        !hiddenFields.has(field) &&
         field !== 'hasLid' &&
         field !== 'lidStyle' &&
         ((field !== 'lidClearance' && field !== 'lidLift') || parameters['hasLid'] >= 0.5) &&
@@ -91,6 +101,13 @@ export class WorkspaceDesignService {
   });
 
   label(field: string): string {
+    const shape = this.store.active()?.shape;
+    if (shape === 'cube' && field === 'width') return 'Side Length';
+    if (shape === 'truncated-square-pyramid' && field === 'bottomWidth') return 'Bottom Side Length';
+    if (shape === 'truncated-square-pyramid' && field === 'topWidth') return 'Top Side Length';
+    if (shape === 'polygonal-vase' && field === 'bottomWidth') return 'Bottom Diameter';
+    if (shape === 'polygonal-vase' && field === 'midWidth') return 'Body Diameter';
+    if (shape === 'polygonal-vase' && field === 'topWidth') return 'Top Diameter';
     if (field === 'truncated-cone') return 'Frustum';
     if (field === 'lidLift') return 'Lid Preview Gap';
     if (field === 'lidSkirtHeight') return 'Lid Skirt Height';
@@ -103,10 +120,26 @@ export class WorkspaceDesignService {
   setParameter(field: string, value: number): void {
     const project = this.store.active();
     if (project) {
+      const millimetres = parameterToMillimetres(field, Number(value), project.unit);
+      const coupledParameters: Record<string, number> =
+        project.shape === 'cube' && field === 'width'
+          ? { depth: millimetres, height: millimetres }
+          : project.shape === 'truncated-square-pyramid' && field === 'bottomWidth'
+            ? { bottomDepth: millimetres }
+            : project.shape === 'truncated-square-pyramid' && field === 'topWidth'
+              ? { topDepth: millimetres }
+              : project.shape === 'polygonal-vase' && field === 'bottomWidth'
+                ? { bottomDepth: millimetres }
+                : project.shape === 'polygonal-vase' && field === 'midWidth'
+                  ? { midDepth: millimetres }
+                  : project.shape === 'polygonal-vase' && field === 'topWidth'
+                    ? { topDepth: millimetres }
+                    : {};
       this.store.update({
         parameters: {
           ...project.parameters,
-          [field]: parameterToMillimetres(field, Number(value), project.unit),
+          [field]: millimetres,
+          ...coupledParameters,
         },
       });
     }

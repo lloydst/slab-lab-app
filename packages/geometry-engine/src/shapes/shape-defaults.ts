@@ -2,6 +2,14 @@ import type { Params } from './shape-params';
 
 export const shapeDefaults: Record<string, Params> = {
   cylinder: { diameter: 120, height: 140, wallThickness: 6 },
+  cup: {
+    diameter: 100,
+    height: 95,
+    wallThickness: 6,
+    handleHeight: 64,
+    handleProjection: 38,
+    handleWidth: 12,
+  },
   cube: { width: 120, depth: 120, height: 120, wallThickness: 6 },
   box: {
     width: 160,
@@ -21,6 +29,20 @@ export const shapeDefaults: Record<string, Params> = {
     height: 200,
     wallThickness: 6,
     hasLid: 0,
+    lidStyle: 0,
+    lidClearance: 1.5,
+    lidLift: 30,
+    lidSkirtHeight: 24,
+  },
+  'handled-jar': {
+    topDiameter: 120,
+    bottomDiameter: 120,
+    height: 165,
+    wallThickness: 6,
+    handleHeight: 90,
+    handleProjection: 45,
+    handleWidth: 14,
+    hasLid: 1,
     lidStyle: 0,
     lidClearance: 1.5,
     lidLift: 30,

@@ -8,8 +8,11 @@ export class LocalProjectRepository implements ProjectRepository {
 
   load(): SlabProject[] {
     try {
-      return JSON.parse(localStorage.getItem(this.key) ?? '[]') as SlabProject[];
-    } catch {
+      const projects: unknown = JSON.parse(localStorage.getItem(this.key) ?? '[]');
+      if (!Array.isArray(projects)) throw new TypeError('Stored projects must be an array');
+      return projects as SlabProject[];
+    } catch (error) {
+      console.error('Could not load stored projects', error);
       return [];
     }
   }

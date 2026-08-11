@@ -63,7 +63,7 @@
           [class.selected]="store.active()?.shape === item.kind"
           (click)="store.setShape(item.kind)"
         >
-          <b>{{ item.glyph }}</b
+          <b><slab-shape-glyph [kind]="item.kind" /></b
           ><span>{{ item.label }}</span>
         </button>
       }
@@ -85,7 +85,12 @@
             <mat-option [value]="0">None</mat-option>
             <mat-option [value]="1">Inset</mat-option>
             <mat-option [value]="2">Overhanging</mat-option>
-            @if (project.shape === 'box' || project.shape === 'vase' || project.shape === 'oval-box') {
+            @if (
+              project.shape === 'box' ||
+              project.shape === 'vase' ||
+              project.shape === 'handled-jar' ||
+              project.shape === 'oval-box'
+            ) {
               <mat-option [value]="3">Box lid</mat-option>
             }
             <mat-option [value]="4">Top + inset stopper</mat-option>

@@ -3,10 +3,12 @@ import { BowlShape } from './bowl-shape';
 import { BoxShape } from './box-shape';
 import { CubeShape } from './cube-shape';
 import { CylinderShape } from './cylinder-shape';
+import { CupShape } from './cup-shape';
 import { FrustumShape } from './frustum-shape';
 import { EllipticalVaseShape } from './elliptical-vase-shape';
 import { FacetedBowlShape } from './faceted-bowl-shape';
 import { GoredSphereShape } from './gored-sphere-shape';
+import { HandledJarShape } from './handled-jar-shape';
 import { HexagonalPrismShape } from './hexagonal-prism-shape';
 import { OctagonalPrismShape } from './octagonal-prism-shape';
 import { OrganicLoftedVesselShape } from './organic-lofted-vessel-shape';
@@ -23,9 +25,11 @@ type ShapeConstructor = new (parameters: Params) => Shape<Params>;
 
 const shapeClasses = new Map<string, ShapeConstructor>([
   ['cylinder', CylinderShape],
+  ['cup', CupShape],
   ['truncated-cone', FrustumShape],
   ['bowl', BowlShape],
   ['vase', VaseShape],
+  ['handled-jar', HandledJarShape],
   ['oval-box', OvalBoxShape],
   ['cube', CubeShape],
   ['hexagonal-prism', HexagonalPrismShape],
@@ -43,7 +47,8 @@ const shapeClasses = new Map<string, ShapeConstructor>([
 
 export class ShapeFactory {
   create(kind: string, parameters: Params): Shape<Params> {
-    const ShapeClass = shapeClasses.get(kind) ?? BoxShape;
+    const ShapeClass = shapeClasses.get(kind);
+    if (!ShapeClass) throw new RangeError(`Unsupported shape kind: ${kind}`);
     return new ShapeClass(parameters);
   }
 }

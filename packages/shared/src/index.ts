@@ -1,10 +1,12 @@
 export type MeasurementUnit = 'mm' | 'cm' | 'in';
 export type ShapeKind =
   | 'cylinder'
+  | 'cup'
   | 'cube'
   | 'box'
   | 'truncated-cone'
   | 'vase'
+  | 'handled-jar'
   | 'bowl'
   | 'oval-box'
   | 'hexagonal-prism'

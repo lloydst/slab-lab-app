@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WorkspaceDesignService } from '../services/workspace-design.service';
 import { WorkspaceUiService } from '../services/workspace-ui.service';
+import { ShapeGlyphComponent } from './shape-glyph.component';
 
 @Component({
   selector: 'slab-workspace-form',
@@ -18,6 +19,7 @@ import { WorkspaceUiService } from '../services/workspace-ui.service';
     MatIconModule,
     MatSelectModule,
     MatSlideToggleModule,
+    ShapeGlyphComponent,
   ],
   templateUrl: './workspace-form.component.html',
   styleUrl: './workspace-form.component.scss',

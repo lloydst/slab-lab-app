@@ -1,10 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { downloadBlob, PdfExporter, PngExporter, SvgExporter } from '@slablab/exporters';
-import {
-  compensate,
-  millimetresToUnit,
-  ShapeFactory,
-} from '@slablab/geometry-engine';
+import { compensate, millimetresToUnit, ShapeFactory } from '@slablab/geometry-engine';
 import { MeasurementUnit, ShapeKind } from '@slablab/shared';
 import {
   isDimensionalParameter,
@@ -14,36 +10,32 @@ import {
 import { ProjectStore } from '../../../data-access/projects/project.store';
 
 export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png';
-type ShapeOption = { kind: ShapeKind; label: string; glyph: string };
+type ShapeOption = { kind: ShapeKind; label: string };
 
 @Injectable()
 export class WorkspaceDesignService {
   readonly store = inject(ProjectStore);
   private readonly factory = new ShapeFactory();
-
-  readonly shapes: ShapeOption[] = ([
-    { kind: 'cylinder', label: 'Cylinder', glyph: '◯' },
-    { kind: 'cube', label: 'Cube', glyph: '□' },
-    { kind: 'box', label: 'Box', glyph: '▭' },
-    { kind: 'truncated-cone', label: 'Frustum', glyph: '▽' },
-    { kind: 'vase', label: 'Vase', glyph: '♢' },
-    { kind: 'bowl', label: 'Bowl', glyph: '⌣' },
-    { kind: 'oval-box', label: 'Oval box', glyph: '⬭' },
-    { kind: 'hexagonal-prism', label: 'Hexagonal prism', glyph: '⬡' },
-    { kind: 'octagonal-prism', label: 'Octagonal prism', glyph: '⯃' },
-    { kind: 'tapered-box', label: 'Tapered box', glyph: '▱' },
-    { kind: 'truncated-square-pyramid', label: 'Square pyramid', glyph: '◫' },
-    { kind: 'polygonal-vase', label: 'Polygonal vase', glyph: '⬢' },
-    { kind: 'rounded-rectangle-box', label: 'Rounded box', glyph: '▢' },
-    { kind: 'elliptical-vase', label: 'Elliptical vase', glyph: '⬭' },
-    { kind: 'faceted-bowl', label: 'Faceted bowl', glyph: '◡' },
-    { kind: 'gored-sphere', label: 'Gored sphere', glyph: '◉' },
-    { kind: 'teardrop-vessel', label: 'Teardrop', glyph: '◒' },
-    { kind: 'organic-lofted-vessel', label: 'Organic loft', glyph: '≈' },
-  ] as ShapeOption[]).filter(
-    (shape) =>
-      shape.kind !== 'truncated-square-pyramid' && shape.kind !== 'rounded-rectangle-box',
-  );
+  readonly shapes: ShapeOption[] = [
+    { kind: 'cup', label: 'Cup' },
+    { kind: 'handled-jar', label: 'Handled jar' },
+    { kind: 'cylinder', label: 'Cylinder' },
+    { kind: 'cube', label: 'Cube' },
+    { kind: 'box', label: 'Box' },
+    { kind: 'truncated-cone', label: 'Frustum' },
+    { kind: 'vase', label: 'Vase' },
+    { kind: 'bowl', label: 'Bowl' },
+    { kind: 'oval-box', label: 'Oval box' },
+    { kind: 'hexagonal-prism', label: 'Hexagonal prism' },
+    { kind: 'octagonal-prism', label: 'Octagonal prism' },
+    { kind: 'tapered-box', label: 'Tapered box' },
+    { kind: 'polygonal-vase', label: 'Polygonal vase' },
+    { kind: 'elliptical-vase', label: 'Elliptical vase' },
+    { kind: 'faceted-bowl', label: 'Faceted bowl' },
+    { kind: 'gored-sphere', label: 'Gored sphere' },
+    { kind: 'teardrop-vessel', label: 'Teardrop' },
+    { kind: 'organic-lofted-vessel', label: 'Organic loft' },
+  ];
   readonly shape = computed(() => {
     const project = this.store.active();
     if (!project) return null;
@@ -84,9 +76,7 @@ export class WorkspaceDesignService {
   });
   readonly thicknessLabel = computed(() => {
     const project = this.store.active();
-    return project
-      ? `${this.displayParameter('wallThickness')} ${project.unit}`
-      : '';
+    return project ? `${this.displayParameter('wallThickness')} ${project.unit}` : '';
   });
   readonly fields = computed(() => {
     const project = this.store.active();
@@ -96,8 +86,6 @@ export class WorkspaceDesignService {
         ? new Set(['depth', 'height'])
         : project?.shape === 'hexagonal-prism' || project?.shape === 'octagonal-prism'
           ? new Set(['topRadius'])
-        : project?.shape === 'truncated-square-pyramid'
-          ? new Set(['bottomDepth', 'topDepth'])
           : project?.shape === 'polygonal-vase'
             ? new Set(['bottomDepth', 'midDepth', 'topDepth'])
             : new Set<string>();
@@ -116,8 +104,6 @@ export class WorkspaceDesignService {
     if (shape === 'cube' && field === 'width') return 'Side Length';
     if ((shape === 'hexagonal-prism' || shape === 'octagonal-prism') && field === 'bottomRadius')
       return 'Radius';
-    if (shape === 'truncated-square-pyramid' && field === 'bottomWidth') return 'Bottom Side Length';
-    if (shape === 'truncated-square-pyramid' && field === 'topWidth') return 'Top Side Length';
     if (shape === 'polygonal-vase' && field === 'bottomWidth') return 'Bottom Diameter';
     if (shape === 'polygonal-vase' && field === 'midWidth') return 'Body Diameter';
     if (shape === 'polygonal-vase' && field === 'topWidth') return 'Top Diameter';
@@ -140,17 +126,13 @@ export class WorkspaceDesignService {
           : (project.shape === 'hexagonal-prism' || project.shape === 'octagonal-prism') &&
               field === 'bottomRadius'
             ? { topRadius: millimetres }
-          : project.shape === 'truncated-square-pyramid' && field === 'bottomWidth'
-            ? { bottomDepth: millimetres }
-            : project.shape === 'truncated-square-pyramid' && field === 'topWidth'
-              ? { topDepth: millimetres }
-              : project.shape === 'polygonal-vase' && field === 'bottomWidth'
-                ? { bottomDepth: millimetres }
-                : project.shape === 'polygonal-vase' && field === 'midWidth'
-                  ? { midDepth: millimetres }
-                  : project.shape === 'polygonal-vase' && field === 'topWidth'
-                    ? { topDepth: millimetres }
-                    : {};
+            : project.shape === 'polygonal-vase' && field === 'bottomWidth'
+              ? { bottomDepth: millimetres }
+              : project.shape === 'polygonal-vase' && field === 'midWidth'
+                ? { midDepth: millimetres }
+                : project.shape === 'polygonal-vase' && field === 'topWidth'
+                  ? { topDepth: millimetres }
+                  : {};
       this.store.update({
         parameters: {
           ...project.parameters,

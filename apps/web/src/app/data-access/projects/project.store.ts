@@ -14,26 +14,26 @@ export class ProjectStore {
 
   constructor(local: LocalProjectRepository) {
     this.repository = local;
-    let migrated = false;
-    const stored = this.repository.load().map((project): SlabProject => {
-      const shape: ShapeKind =
-        (project.shape as string) === 'tapered-cylinder' ? 'truncated-cone' : project.shape;
+    const stored = this.repository.load().flatMap((project): SlabProject[] => {
+      const shape = project.shape as string;
+      if (!Object.hasOwn(shapeDefaults, shape)) {
+        console.error(`Skipping project "${project.name}" with unsupported shape kind: ${shape}`);
+        return [];
+      }
       const canonical = project.parametersInMillimetres === true;
-      migrated ||= !canonical;
-      return {
-        ...project,
-        shape,
-        parameters: {
-          ...shapeDefaults[shape],
-          ...(canonical
-            ? project.parameters
-            : parametersToMillimetres(project.parameters, project.unit)),
+      return [
+        {
+          ...project,
+          shape: shape as ShapeKind,
+          parameters: {
+            ...shapeDefaults[shape as ShapeKind],
+            ...(canonical ? project.parameters : parametersToMillimetres(project.parameters, project.unit)),
+          },
+          parametersInMillimetres: true,
         },
-        parametersInMillimetres: true,
-      };
+      ];
     });
     this.projects.set(stored);
-    if (migrated) this.persist();
     if (stored.length) this.activeId.set(stored[0].id);
     else this.create('Cylinder study', 'cylinder');
   }

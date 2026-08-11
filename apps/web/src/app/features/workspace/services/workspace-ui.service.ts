@@ -13,9 +13,4 @@ export class WorkspaceUiService {
     this.panel.set(panel);
     this.mobilePanelOpen.set(true);
   }
-
-  openTemplate(): void {
-    this.openPanel('shape');
-    this.tab.set('template');
-  }
 }

@@ -6,6 +6,7 @@ import {
   ElementRef,
   inject,
   input,
+  signal,
   viewChild,
 } from '@angular/core';
 import type { MeshData } from '@slablab/geometry-engine';
@@ -23,7 +24,9 @@ export class PreviewComponent {
   readonly thicknessLabel = input('');
   readonly closedTop = input(false);
   readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
+  readonly interacting = signal(false);
   private preview?: PreviewRenderer;
+  private interactionTimer?: ReturnType<typeof setTimeout>;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -39,6 +42,24 @@ export class PreviewComponent {
       this.preview.render(this.meshData(), this.wallThickness(), this.closedTop());
     });
 
-    this.destroyRef.onDestroy(() => this.preview?.dispose());
+    this.destroyRef.onDestroy(() => {
+      if (this.interactionTimer) clearTimeout(this.interactionTimer);
+      this.preview?.dispose();
+    });
+  }
+
+  interactionStarted(): void {
+    if (this.interactionTimer) clearTimeout(this.interactionTimer);
+    this.interacting.set(true);
+  }
+
+  interactionEnded(): void {
+    if (this.interactionTimer) clearTimeout(this.interactionTimer);
+    this.interactionTimer = setTimeout(() => this.interacting.set(false), 900);
+  }
+
+  wheelInteraction(): void {
+    this.interactionStarted();
+    this.interactionEnded();
   }
 }

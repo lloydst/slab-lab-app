@@ -9,7 +9,6 @@
   </button>
   @if (ui.panel() === 'projects') {
     <div class="section-heading">
-      <p>PROJECT LIBRARY</p>
       <h1>Your projects</h1>
       <span>Open, duplicate, or remove a saved design.</span>
     </div>
@@ -21,7 +20,10 @@
           (click)="store.activeId.set(project.id); ui.panel.set('shape')"
         >
           <mat-icon>description</mat-icon>
-          <span><b>{{ project.name }}</b><small>{{ design.label(project.shape) }}</small></span>
+          <span
+            ><b>{{ project.name }}</b
+            ><small>{{ design.label(project.shape) }}</small></span
+          >
         </button>
       }
     </div>
@@ -43,16 +45,16 @@
       <li><b>Choose a shape</b><span>Select a construction form and enter its finished dimensions.</span></li>
       <li><b>Set your clay</b><span>Add the measured firing shrinkage for your clay body.</span></li>
       <li><b>Inspect the form</b><span>Rotate, zoom, and pan the 3D preview to check proportions.</span></li>
-      <li><b>Print at actual size</b><span>Export PDF or SVG and print at 100% without page scaling.</span></li>
+      <li>
+        <b>Print at actual size</b><span>Export PDF or SVG and print at 100% without page scaling.</span>
+      </li>
     </ol>
     <button type="button" mat-stroked-button class="panel-action" (click)="ui.panel.set('shape')">
       <mat-icon>arrow_back</mat-icon> Back to design
     </button>
   } @else {
     <div class="section-heading">
-      <p>SHAPE LIBRARY</p>
-      <h1>Choose your form</h1>
-      <span>Start with a classic construction shape.</span>
+      <span>Start with a Geometric shape.</span>
     </div>
     <div class="shape-grid">
       @for (item of design.shapes; track item.kind) {
@@ -61,7 +63,8 @@
           [class.selected]="store.active()?.shape === item.kind"
           (click)="store.setShape(item.kind)"
         >
-          <b>{{ item.glyph }}</b><span>{{ item.label }}</span>
+          <b>{{ item.glyph }}</b
+          ><span>{{ item.label }}</span>
         </button>
       }
     </div>
@@ -123,7 +126,7 @@
                 [min]="field === 'roundness' || field === 'lidLift' ? 0 : 0.1"
                 [max]="field === 'roundness' ? 100 : null"
                 step="1"
-                [ngModel]="project.parameters[field]"
+                [ngModel]="design.displayParameter(field)"
                 (ngModelChange)="design.setParameter(field, $event)"
               /><em>{{ field === 'roundness' ? '%' : project.unit }}</em>
             </div>
@@ -134,7 +137,11 @@
       <div class="settings-row">
         <label>
           <span>Units</span>
-          <mat-select [ngModel]="project.unit" (ngModelChange)="store.update({ unit: $event })">
+          <mat-select
+            aria-label="Units"
+            [ngModel]="project.unit"
+            (ngModelChange)="design.setUnit($event)"
+          >
             <mat-option value="mm">Millimeters</mat-option>
             <mat-option value="cm">Centimeters</mat-option>
             <mat-option value="in">Inches</mat-option>
@@ -154,6 +161,16 @@
         </label>
       </div>
       <div class="stats">
+        @if (design.estimatedFiredSize(); as fired) {
+          <div class="fired-size">
+            <span>Estimated size after firing</span>
+            <b>
+              {{ fired.width | number: '1.0-2' }} × {{ fired.depth | number: '1.0-2' }} ×
+              {{ fired.height | number: '1.0-2' }} {{ fired.unit }}
+            </b>
+            <small>Width × depth × height at {{ project.shrinkage | number: '1.0-1' }}% shrinkage</small>
+          </div>
+        }
         <div>
           <span>Surface area</span>
           <b>{{ (design.shape()?.calculateSurfaceArea() ?? 0) / 100 | number: '1.0-0' }} cm²</b>

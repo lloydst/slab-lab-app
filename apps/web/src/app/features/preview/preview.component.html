@@ -1,4 +1,14 @@
-<canvas #canvas aria-label="Interactive 3D preview"></canvas>
+<canvas
+  #canvas
+  aria-label="Interactive 3D preview"
+  (pointerdown)="interactionStarted()"
+  (pointerup)="interactionEnded()"
+  (pointercancel)="interactionEnded()"
+  (wheel)="wheelInteraction()"
+></canvas>
+<div class="interaction-hint" [class.hidden]="interacting()" aria-hidden="true">
+  Drag to rotate · Scroll to zoom · Shift-drag to pan
+</div>
 @if (wallThickness() > 0 && !closedTop()) {
   <div class="thickness-key" aria-label="Wall thickness">
     <span class="inner-swatch"></span>

@@ -1,10 +1,14 @@
-<slab-workspace-header
-  [exportDisabled]="design.issues().length > 0"
-  (exportRequested)="design.export('pdf')"
-/>
+<slab-workspace-header />
 
 <main class="workspace">
   <slab-workspace-sidebar />
+  <button
+    type="button"
+    class="mobile-scrim"
+    [class.visible]="ui.mobilePanelOpen()"
+    aria-label="Close design panel"
+    (click)="ui.mobilePanelOpen.set(false)"
+  ></button>
   <slab-workspace-form />
   <slab-workspace-tabs />
 </main>

@@ -1,5 +1,6 @@
 import { LoftGenerator } from '../generators/loft-generator';
 import type { Params } from './shape-params';
+
 export class TeardropVesselShape extends LoftGenerator {
   override readonly kind = 'teardrop-vessel';
   constructor(parameters: Params) {

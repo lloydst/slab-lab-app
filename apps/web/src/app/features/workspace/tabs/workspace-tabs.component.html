@@ -1,10 +1,16 @@
 <section class="stage">
-  <div class="stage-tabs">
-    <button type="button" [class.active]="ui.tab() === 'form'" (click)="ui.tab.set('form')">3D FORM</button>
-    <button type="button" [class.active]="ui.tab() === 'template'" (click)="ui.tab.set('template')">
+  <mat-button-toggle-group
+    class="stage-tabs"
+    aria-label="Preview type"
+    hideSingleSelectionIndicator
+    [value]="ui.tab()"
+    (change)="ui.tab.set($event.value)"
+  >
+    <mat-button-toggle value="form">3D FORM</mat-button-toggle>
+    <mat-button-toggle value="template">
       FLAT TEMPLATE
-    </button>
-  </div>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
   <div class="stage-body">
     @if (design.shape(); as shape) {
       @if (ui.tab() === 'form') {
@@ -18,7 +24,7 @@
         <slab-template-preview [template]="shape.generateTemplate()" />
       }
     }
-    <div class="view-help">
+    <div class="view-help legacy-hidden">
       <mat-icon>mouse</mat-icon> Drag to rotate · Scroll to zoom · Shift-drag to pan
     </div>
   </div>
@@ -65,5 +71,25 @@
         <span class="download-label">Download&nbsp;</span>PDF
       </button>
     </div>
+    <button
+      type="button"
+      mat-fab
+      class="mobile-export"
+      aria-label="Export template"
+      [disabled]="design.issues().length > 0"
+      [matMenuTriggerFor]="exportMenu"
+    >
+      <mat-icon>download</mat-icon>
+    </button>
+    <mat-menu #exportMenu="matMenu" xPosition="before" yPosition="above">
+      <button type="button" mat-menu-item (click)="design.export('svg')"><mat-icon>code</mat-icon>SVG</button>
+      <button type="button" mat-menu-item (click)="design.export('png')"><mat-icon>image</mat-icon>PNG</button>
+      <button type="button" mat-menu-item (click)="design.export('pdf-borderless')">
+        <mat-icon>fit_screen</mat-icon>Borderless PDF
+      </button>
+      <button type="button" mat-menu-item (click)="design.export('pdf')">
+        <mat-icon>picture_as_pdf</mat-icon>Download PDF
+      </button>
+    </mat-menu>
   </footer>
 </section>

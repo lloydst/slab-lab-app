@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { previewColor } from './preview-theme';
 
 export const createBodyGeometry = (geometry: THREE.BufferGeometry, bodyVertexCount?: number) => {
   if (!bodyVertexCount) return geometry;
@@ -55,7 +56,7 @@ export const createInnerSurface = (
   const innerSurface = new THREE.Mesh(
     innerGeometry,
     new THREE.MeshStandardMaterial({
-      color: '#e3a06f',
+      color: previewColor('--color-preview-clay-inner', '#e3a06f'),
       roughness: 0.86,
       metalness: 0,
       side: THREE.DoubleSide,
@@ -71,7 +72,11 @@ export const createInnerSurface = (
 export const createEdgeLines = (geometry: THREE.BufferGeometry): THREE.LineSegments => {
   const edgeLines = new THREE.LineSegments(
     new THREE.EdgesGeometry(geometry, 24),
-    new THREE.LineBasicMaterial({ color: '#000000', transparent: true, opacity: 0.92 }),
+    new THREE.LineBasicMaterial({
+      color: previewColor('--color-preview-edge', '#000'),
+      transparent: true,
+      opacity: 0.92,
+    }),
   );
   edgeLines.renderOrder = 2;
   return edgeLines;
@@ -112,7 +117,10 @@ export const createBottomEdge = (geometry: THREE.BufferGeometry): THREE.LineLoop
   const edgeGeometry = new THREE.BufferGeometry().setFromPoints(
     outline.map((point) => new THREE.Vector3(point.x, bounds.min.y + 0.08, point.y)),
   );
-  const edge = new THREE.LineLoop(edgeGeometry, new THREE.LineBasicMaterial({ color: '#000000' }));
+  const edge = new THREE.LineLoop(
+    edgeGeometry,
+    new THREE.LineBasicMaterial({ color: previewColor('--color-preview-edge', '#000') }),
+  );
   edge.renderOrder = 3;
   return edge;
 };
@@ -158,7 +166,7 @@ export const createRim = (outerGeometry: THREE.BufferGeometry, thickness: number
   return new THREE.Mesh(
     rimGeometry,
     new THREE.MeshStandardMaterial({
-      color: '#d98c5a',
+      color: previewColor('--color-preview-clay-edge', '#d98c5a'),
       roughness: 0.84,
       metalness: 0,
       side: THREE.DoubleSide,

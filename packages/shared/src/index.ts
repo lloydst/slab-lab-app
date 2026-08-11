@@ -26,6 +26,8 @@ export interface SlabProject {
   parameters: Record<string, number>;
   shrinkage: number;
   unit: MeasurementUnit;
+  /** True when dimensional values in parameters use the canonical millimetre unit. */
+  parametersInMillimetres: true;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,5 +1,6 @@
 import { ProfileVesselGenerator } from '../generators/profile-vessel-generator';
 import type { Params } from './shape-params';
+
 export class FacetedBowlShape extends ProfileVesselGenerator {
   override readonly kind = 'faceted-bowl';
   constructor(parameters: Params) {

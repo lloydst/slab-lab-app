@@ -1,0 +1,64 @@
+:root {
+  color-scheme: light;
+
+  --color-canvas: #eef0e9;
+  --color-surface: #fafaf7;
+  --color-surface-raised: #fff;
+  --color-surface-muted: #f4f5f0;
+  --color-template-canvas: #dfe1da;
+  --color-selection-surface: #fcf5f1;
+
+  --color-text: #1d2920;
+  --color-text-strong: #1f2c22;
+  --color-text-control: #263027;
+  --color-text-secondary: #657168;
+  --color-text-muted: #738077;
+  --color-text-subtle: #7d877f;
+
+  --color-accent: #bd643f;
+  --color-accent-border: #b75e3b;
+  --color-accent-text: #9e4c31;
+  --color-accent-heading: #a45235;
+  --color-accent-soft-border: #dfc4b7;
+  --color-accent-soft-text: #8f452e;
+  --color-danger: #b33c2f;
+  --color-success: #638267;
+
+  --color-border: #d6d9d2;
+  --color-border-control: #d7dbd4;
+  --color-border-soft: #e1e3de;
+  --color-border-light: #e3e5e0;
+  --color-border-tile: #dde0da;
+
+  --color-sidebar: #202b23;
+  --color-sidebar-text: #cad0ca;
+  --color-sidebar-active: #38473c;
+  --color-sidebar-rule: #455148;
+  --color-sidebar-border: #435047;
+
+  --color-on-accent: #fff;
+  --color-transparent: transparent;
+  --color-scrim: rgb(22 31 25 / 42%);
+  --color-overlay: rgb(255 255 255 / 88%);
+  --color-warm-overlay: rgb(255 252 244 / 88%);
+  --color-warm-border: rgb(79 43 32 / 18%);
+
+  --shadow-control: 0 2px 8px rgb(31 44 34 / 6%);
+  --shadow-sidebar: 0 -8px 24px rgb(27 38 30 / 16%);
+  --shadow-sidebar-landscape: 8px 0 20px rgb(27 38 30 / 10%);
+  --shadow-panel: 0 -14px 36px rgb(32 43 35 / 22%);
+  --shadow-panel-landscape: 14px 0 32px rgb(32 43 35 / 22%);
+  --shadow-paper: 0 8px 30px rgb(24 34 27 / 14%);
+  --shadow-overlay: 0 3px 12px rgb(54 35 25 / 10%);
+  --shadow-overlay-light: 0 3px 12px rgb(54 35 25 / 8%);
+
+  --color-preview-clay: #b96843;
+  --color-preview-clay-inner: #e3a06f;
+  --color-preview-clay-edge: #d98c5a;
+  --color-preview-edge: #000;
+  --color-preview-grid: #a3aa9f;
+  --color-preview-grid-secondary: #d5d8d1;
+  --color-preview-light-sky: #fff7e5;
+  --color-preview-light-ground: #425246;
+  --color-preview-light-key: #fff;
+}

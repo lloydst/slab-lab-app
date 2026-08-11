@@ -8,6 +8,7 @@ import {
   createInnerSurface,
   createRim,
 } from './preview-geometry';
+import { previewColor } from './preview-theme';
 
 type PreviewObject = THREE.Mesh | THREE.LineSegments | THREE.LineLoop;
 type PreviewObjectKey =
@@ -38,7 +39,7 @@ export class PreviewRenderer {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
-    this.scene.background = new THREE.Color('#eef0e9');
+    this.scene.background = new THREE.Color(previewColor('--color-canvas', '#eef0e9'));
     this.camera.position.set(270, 220, 300);
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enableDamping = true;
@@ -66,11 +67,24 @@ export class PreviewRenderer {
   }
 
   private addSceneHelpers(): void {
-    this.scene.add(new THREE.HemisphereLight(0xfff7e5, 0x425246, 2.8));
-    const key = new THREE.DirectionalLight(0xffffff, 3);
+    this.scene.add(
+      new THREE.HemisphereLight(
+        previewColor('--color-preview-light-sky', '#fff7e5'),
+        previewColor('--color-preview-light-ground', '#425246'),
+        2.8,
+      ),
+    );
+    const key = new THREE.DirectionalLight(previewColor('--color-preview-light-key', '#fff'), 3);
     key.position.set(200, 300, 180);
     this.scene.add(key);
-    this.scene.add(new THREE.GridHelper(500, 20, 0xa3aa9f, 0xd5d8d1));
+    this.scene.add(
+      new THREE.GridHelper(
+        500,
+        20,
+        previewColor('--color-preview-grid', '#a3aa9f'),
+        previewColor('--color-preview-grid-secondary', '#d5d8d1'),
+      ),
+    );
   }
 
   private startAnimation(): void {
@@ -111,7 +125,7 @@ export class PreviewRenderer {
     this.objects.mesh = new THREE.Mesh(
       geometry,
       new THREE.MeshStandardMaterial({
-        color: 0xb96843,
+        color: previewColor('--color-preview-clay', '#b96843'),
         roughness: 0.78,
         metalness: 0,
         side: THREE.DoubleSide,
@@ -122,7 +136,11 @@ export class PreviewRenderer {
     );
     this.objects.edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(geometry, 24),
-      new THREE.LineBasicMaterial({ color: '#000000', transparent: true, opacity: 0.72 }),
+      new THREE.LineBasicMaterial({
+        color: previewColor('--color-preview-edge', '#000'),
+        transparent: true,
+        opacity: 0.72,
+      }),
     );
     this.objects.edges.renderOrder = 1;
     this.scene.add(this.objects.mesh, this.objects.edges);

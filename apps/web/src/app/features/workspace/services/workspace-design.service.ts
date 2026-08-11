@@ -1,7 +1,17 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { downloadBlob, PdfExporter, PngExporter, SvgExporter } from '@slablab/exporters';
-import { compensate, frustumPresets, ShapeFactory } from '@slablab/geometry-engine';
+import {
+  compensate,
+  frustumPresets,
+  millimetresToUnit,
+  ShapeFactory,
+} from '@slablab/geometry-engine';
 import { MeasurementUnit, ShapeKind } from '@slablab/shared';
+import {
+  isDimensionalParameter,
+  parameterFromMillimetres,
+  parameterToMillimetres,
+} from '../../../data-access/projects/project-units';
 import { ProjectStore } from '../../../data-access/projects/project.store';
 
 export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png';
@@ -34,35 +44,40 @@ export class WorkspaceDesignService {
   readonly shape = computed(() => {
     const project = this.store.active();
     if (!project) return null;
-    const factor: Record<MeasurementUnit, number> = { mm: 1, cm: 10, in: 25.4 };
     const parameters = Object.fromEntries(
       Object.entries(project.parameters).map(([key, value]) => [
         key,
-        key === 'hasLid' ||
-        key === 'lidStyle' ||
-        key === 'roundness' ||
-        key === 'sides' ||
-        key === 'points' ||
-        key === 'facets' ||
-        key === 'gores' ||
-        key === 'includeBase' ||
-        key === 'closedTop'
+        !isDimensionalParameter(key)
           ? value
           : key === 'lidLift'
-            ? value * factor[project.unit]
-            : compensate(value * factor[project.unit], project.shrinkage),
+            ? value
+            : compensate(value, project.shrinkage),
       ]),
     );
     return this.factory.create(project.shape, parameters);
   });
   readonly issues = computed(() => this.shape()?.validate() ?? []);
+  readonly estimatedFiredSize = computed(() => {
+    const project = this.store.active();
+    if (!project) return null;
+    const dimensions = this.factory.create(project.shape, project.parameters).calculateDimensions();
+    const firingFactor = 1 - Math.min(100, Math.max(0, project.shrinkage)) / 100;
+    return {
+      width: millimetresToUnit(dimensions.width * firingFactor, project.unit),
+      depth: millimetresToUnit(dimensions.depth * firingFactor, project.unit),
+      height: millimetresToUnit(dimensions.height * firingFactor, project.unit),
+      unit: project.unit,
+    };
+  });
   readonly hasClosedTop = computed(() => {
     const kind = this.store.active()?.shape;
     return kind === 'cylinder' || kind === 'cube' || kind === 'truncated-cone';
   });
   readonly thicknessLabel = computed(() => {
     const project = this.store.active();
-    return project ? `${project.parameters['wallThickness']} ${project.unit}` : '';
+    return project
+      ? `${this.displayParameter('wallThickness')} ${project.unit}`
+      : '';
   });
   readonly fields = computed(() => {
     const parameters = this.store.active()?.parameters ?? {};
@@ -88,8 +103,23 @@ export class WorkspaceDesignService {
   setParameter(field: string, value: number): void {
     const project = this.store.active();
     if (project) {
-      this.store.update({ parameters: { ...project.parameters, [field]: Number(value) } });
+      this.store.update({
+        parameters: {
+          ...project.parameters,
+          [field]: parameterToMillimetres(field, Number(value), project.unit),
+        },
+      });
     }
+  }
+
+  displayParameter(field: string): number {
+    const project = this.store.active();
+    if (!project) return 0;
+    return parameterFromMillimetres(field, project.parameters[field], project.unit);
+  }
+
+  setUnit(unit: MeasurementUnit): void {
+    this.store.update({ unit });
   }
 
   setFrustumPreset(preset: 'tapered' | 'frustum'): void {

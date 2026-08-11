@@ -1,5 +1,6 @@
 import { ProfileVesselGenerator } from '../generators/profile-vessel-generator';
 import type { Params } from './shape-params';
+
 export class GoredSphereShape extends ProfileVesselGenerator {
   override readonly kind = 'gored-sphere';
   constructor(parameters: Params) {

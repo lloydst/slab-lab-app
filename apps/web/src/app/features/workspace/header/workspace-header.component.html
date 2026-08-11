@@ -45,14 +45,5 @@
     <button type="button" mat-button (click)="ui.openPanel('guide')">
       <mat-icon>help_outline</mat-icon><span class="nav-label">Guide</span>
     </button>
-    <button
-      type="button"
-      mat-flat-button
-      class="primary"
-      [disabled]="exportDisabled()"
-      (click)="exportRequested.emit()"
-    >
-      <mat-icon>download</mat-icon><span class="nav-label">Export</span>
-    </button>
   </nav>
 </header>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,8 +16,6 @@ import { WorkspaceUiService } from '../services/workspace-ui.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceHeaderComponent {
-  readonly exportDisabled = input(false);
-  readonly exportRequested = output<void>();
   readonly store = inject(ProjectStore);
   readonly ui = inject(WorkspaceUiService);
 }

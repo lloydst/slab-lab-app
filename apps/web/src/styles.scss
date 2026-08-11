@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'theme';
 @import 'material-symbols/outlined.css';
 
 $slablab-theme: mat.define-theme(

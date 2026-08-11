@@ -3,6 +3,7 @@ import { SlabProject, ShapeKind } from '@slablab/shared';
 import { shapeDefaults } from '@slablab/geometry-engine';
 import { LocalProjectRepository } from './local-project.repository';
 import { ProjectRepository } from './project.repository';
+import { parametersToMillimetres } from './project-units';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectStore {
@@ -13,16 +14,26 @@ export class ProjectStore {
 
   constructor(local: LocalProjectRepository) {
     this.repository = local;
+    let migrated = false;
     const stored = this.repository.load().map((project): SlabProject => {
       const shape: ShapeKind =
         (project.shape as string) === 'tapered-cylinder' ? 'truncated-cone' : project.shape;
+      const canonical = project.parametersInMillimetres === true;
+      migrated ||= !canonical;
       return {
         ...project,
         shape,
-        parameters: { ...shapeDefaults[shape], ...project.parameters },
+        parameters: {
+          ...shapeDefaults[shape],
+          ...(canonical
+            ? project.parameters
+            : parametersToMillimetres(project.parameters, project.unit)),
+        },
+        parametersInMillimetres: true,
       };
     });
     this.projects.set(stored);
+    if (migrated) this.persist();
     if (stored.length) this.activeId.set(stored[0].id);
     else this.create('Cylinder study', 'cylinder');
   }
@@ -36,6 +47,7 @@ export class ProjectStore {
       parameters: { ...shapeDefaults[shape] },
       shrinkage: 0,
       unit: 'mm',
+      parametersInMillimetres: true,
       createdAt: now,
       updatedAt: now,
     };

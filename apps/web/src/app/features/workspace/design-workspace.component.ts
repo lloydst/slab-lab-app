@@ -22,4 +22,5 @@ import { WorkspaceTabsComponent } from './tabs/workspace-tabs.component';
 })
 export class DesignWorkspaceComponent {
   readonly design = inject(WorkspaceDesignService);
+  readonly ui = inject(WorkspaceUiService);
 }

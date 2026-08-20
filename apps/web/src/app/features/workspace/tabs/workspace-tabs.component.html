@@ -7,9 +7,7 @@
     (change)="ui.tab.set($event.value)"
   >
     <mat-button-toggle value="form">3D FORM</mat-button-toggle>
-    <mat-button-toggle value="template">
-      FLAT TEMPLATE
-    </mat-button-toggle>
+    <mat-button-toggle value="template"> FLAT TEMPLATE </mat-button-toggle>
   </mat-button-toggle-group>
   <div class="stage-body">
     @if (design.shape(); as shape) {
@@ -53,6 +51,15 @@
       <button
         type="button"
         mat-stroked-button
+        aria-label="Download printable STL"
+        [disabled]="design.issues().length > 0"
+        (click)="design.export('stl')"
+      >
+        STL
+      </button>
+      <button
+        type="button"
+        mat-stroked-button
         aria-label="Borderless PDF"
         [disabled]="design.issues().length > 0"
         (click)="design.export('pdf-borderless')"
@@ -83,7 +90,12 @@
     </button>
     <mat-menu #exportMenu="matMenu" xPosition="before" yPosition="above">
       <button type="button" mat-menu-item (click)="design.export('svg')"><mat-icon>code</mat-icon>SVG</button>
-      <button type="button" mat-menu-item (click)="design.export('png')"><mat-icon>image</mat-icon>PNG</button>
+      <button type="button" mat-menu-item (click)="design.export('png')">
+        <mat-icon>image</mat-icon>PNG
+      </button>
+      <button type="button" mat-menu-item (click)="design.export('stl')">
+        <mat-icon>view_in_ar</mat-icon>Printable STL
+      </button>
       <button type="button" mat-menu-item (click)="design.export('pdf-borderless')">
         <mat-icon>fit_screen</mat-icon>Borderless PDF
       </button>

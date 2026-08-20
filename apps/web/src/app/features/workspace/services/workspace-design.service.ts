@@ -8,8 +8,9 @@ import {
   parameterToMillimetres,
 } from '../../../data-access/projects/project-units';
 import { ProjectStore } from '../../../data-access/projects/project.store';
+import { printableMeshToStl } from '../../preview/printable-mesh-export';
 
-export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png';
+export type ExportFormat = 'svg' | 'pdf' | 'pdf-borderless' | 'png' | 'stl';
 type ShapeOption = { kind: ShapeKind; label: string };
 
 @Injectable()
@@ -177,6 +178,15 @@ export class WorkspaceDesignService {
     const shape = this.shape();
     const project = this.store.active();
     if (!shape || !project || this.issues().length) return;
+    const filename = project.name.replace(/\s+/g, '-').toLowerCase();
+    if (format === 'stl') {
+      const mesh = shape.generateMesh();
+      downloadBlob(
+        printableMeshToStl(mesh, shape.parameters['wallThickness'], this.hasClosedTop()),
+        `${filename}.stl`,
+      );
+      return;
+    }
     const exporter =
       format === 'svg'
         ? new SvgExporter()
@@ -187,9 +197,6 @@ export class WorkspaceDesignService {
             : new PngExporter();
     const extension = format === 'pdf-borderless' ? 'pdf' : format;
     const suffix = format === 'pdf-borderless' ? '-borderless' : '';
-    downloadBlob(
-      await exporter.export(shape.generateTemplate()),
-      `${project.name.replace(/\s+/g, '-').toLowerCase()}${suffix}.${extension}`,
-    );
+    downloadBlob(await exporter.export(shape.generateTemplate()), `${filename}${suffix}.${extension}`);
   }
 }
